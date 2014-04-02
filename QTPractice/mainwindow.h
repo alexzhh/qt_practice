@@ -5,6 +5,9 @@
 #include <QMessageBox>
 #include <QString>
 #include <QTextDecoder>
+#include <QFile>
+#include <QFileDialog>
+#include <QAbstractItemModel>
 namespace Ui {
 class MainWindow;
 }
@@ -19,16 +22,13 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QString OpenFilePath;
+    QString SaveFilePath;
 public slots:
-    void QuitWindows()
-    {
-        if(QMessageBox::warning(this,QString::fromStdString("Warning"),
-                                QString::fromStdString("Quit Windows?"),
-                                QMessageBox::Yes|QMessageBox::No)==QMessageBox::Yes)
-        {
-            emit close();
-        }
-    }
+    void OpenFile();
+    void SaveFile();
+    void QuitWindows();
+    void EditModeChanged(bool);
 };
 
 #endif // MAINWINDOW_H
