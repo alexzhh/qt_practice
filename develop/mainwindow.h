@@ -8,6 +8,9 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QAbstractItemModel>
+#include "dcminformation.h"
+
+
 namespace Ui {
 class MainWindow;
 }
@@ -22,6 +25,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    DcmInformation *dcm;
     QString OpenFilePath;
     QString SaveFilePath;
 public slots:

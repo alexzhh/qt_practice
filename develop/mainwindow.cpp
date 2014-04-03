@@ -12,11 +12,18 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->actionEdit,SIGNAL(triggered(bool)),this,SLOT(EditModeChanged(bool)));
     emit EditModeChanged(false);
     //QMessageBox::about(NULL,"",QString::number(ui->tableWidget->rowCount())+QString::number(ui->tableWidget->columnCount()));
+
+    dcm = new DcmInformation();
 }
 void MainWindow::OpenFile()
 {
     OpenFilePath = QFileDialog::getOpenFileName(this,QString::fromStdString("打开DCM文件"),QDir::currentPath(),"DCM文件(*.dcm)");
     //QMessageBox::about(NULL,"",OpenFilePath);
+    dcm->openDcmFile(OpenFilePath);
+//    QVector<AttrElements> tmp = dcm->getAttributes();
+//    QMessageBox::information(this,"",tmp.at(0).value+tmp.at(0).vr);
+    ui->paint->setPixmap( dcm->drawDcmImage(OpenFilePath));
+
 }
 
 void MainWindow::SaveFile()
@@ -50,4 +57,5 @@ void MainWindow::EditModeChanged(bool EditChecked)
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete dcm;
 }

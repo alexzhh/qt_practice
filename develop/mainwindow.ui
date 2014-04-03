@@ -90,6 +90,19 @@
     <property name="title">
      <string>DCM Image</string>
     </property>
+    <widget class="QLabel" name="paint">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>30</y>
+       <width>291</width>
+       <height>291</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>TextLabel</string>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
