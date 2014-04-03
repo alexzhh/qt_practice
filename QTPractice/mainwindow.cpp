@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+using std::string;
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -12,17 +14,28 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->actionEdit,SIGNAL(triggered(bool)),this,SLOT(EditModeChanged(bool)));
     emit EditModeChanged(false);
     //QMessageBox::about(NULL,"",QString::number(ui->tableWidget->rowCount())+QString::number(ui->tableWidget->columnCount()));
+
 }
 void MainWindow::OpenFile()
 {
-    OpenFilePath = QFileDialog::getOpenFileName(this,QString::fromStdString("打开DCM文件"),QDir::currentPath(),"DCM文件(*.dcm)");
-    //QMessageBox::about(NULL,"",OpenFilePath);
+    QString OpenFilePath = QFileDialog::getOpenFileName(this,QString::fromStdString("打开DCM文件"),QDir::currentPath(),"DCM文件(*.dcm)");
+        if(OpenFilePath!="")
+        {
+            QMessageBox::about(NULL,"",OpenFilePath);
+            //Do FileOpen
+        }
+
 }
 
 void MainWindow::SaveFile()
 {
-    SaveFilePath = QFileDialog::getSaveFileName(this,QString::fromStdString(""),QDir::currentPath(),"DCM文件(*.dcm)");
-    QMessageBox::about(NULL,"",SaveFilePath);
+    QString SaveFilePath = QFileDialog::getSaveFileName(this,QString::fromStdString(""),QDir::currentPath(),"DCM文件(*.dcm)");
+        if(SaveFilePath!="")
+        {
+            QMessageBox::about(NULL,"",SaveFilePath);
+            //Do Save File
+        }
+
 }
 
 void MainWindow::QuitWindows()

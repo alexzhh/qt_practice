@@ -8,6 +8,7 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QAbstractItemModel>
+#include <string>
 namespace Ui {
 class MainWindow;
 }
