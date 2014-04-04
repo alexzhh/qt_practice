@@ -19,3 +19,7 @@
 *.exe
 *.out
 *.app
+
+
+# User pro
+./*/*.pro.user
