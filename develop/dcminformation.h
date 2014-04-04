@@ -36,15 +36,15 @@ class DcmInformation
 {
    private:
      QVector <AttrElements> info;
-     DcmDataset *data;
+     DcmDataset data;
    public:
      DcmInformation();
      ~DcmInformation();
      void openDcmFile(QString);        //打开dcm文件
      void fileChecksum();           //文件的校验
-     void setAttributes(int tag1, int tag2, int num);
+     void setAttributes(int, int, int);
      QVector <AttrElements> getAttributes(); //返回五个tag 以及 相应的value
-     DcmDataset *getDcmData();    //返回dcm数据
+     DcmDataset getDcmData();    //返回dcm数据
      QPixmap drawDcmImage(QString);  //返回绘图指针
      QDomDocument dcm2Xml(); //以下三个可先不实现
      void saveDcmAs();

@@ -36,15 +36,16 @@ LIBS +=  -ldcmdata -ldcmimage -ldcmimgle -lofstd -loflog -lz
 }
 #DCMTK Lib setings for Windows
 win32{
-INCLUDEPATH += "D:\Qt\DCMTK\include"
+INCLUDEPATH += "D:/Qt/DCMTK/include"
     debug {
         LIBS +=  -L"D:\Qt\DCMTK\lib" -ldcmdata -ldcmimage -ldcmimgle -lofstd -loflog \
                  -lAdvAPI32 -lWS2_32 -lnetapi32
     }
     release {
-        LIBS +=  -L"D:\Qt\Workspace\DCMTK\lib-release" -ldcmdata -ldcmimage -ldcmimgle -lofstd -loflog \
+        LIBS +=  -L"D:\Qt\DCMTK\lib-release" -ldcmdata -ldcmimage -ldcmimgle -lofstd -loflog \
                  -lAdvAPI32 -lWS2_32 -lnetapi32
     }
 }
 
-FORMS    += mainwindow.ui
+FORMS    += \
+    mainwindow.ui

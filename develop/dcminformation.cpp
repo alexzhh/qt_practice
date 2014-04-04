@@ -18,7 +18,7 @@ void DcmInformation::openDcmFile(QString path)
    DcmFileFormat fileformat;
    OFCondition oc = fileformat.loadFile( path.toStdString().c_str());
    if(oc.good())
-     data = fileformat.getDataset();
+     data = *fileformat.getDataset();
    else
    {
      //errorMessage
@@ -26,10 +26,11 @@ void DcmInformation::openDcmFile(QString path)
 }
 
 
-DcmDataset* DcmInformation::getDcmData()
+DcmDataset DcmInformation::getDcmData()
 {
    return data;
 }
+
 
 void DcmInformation::setAttributes(int tag1, int tag2, int num)
 {
@@ -37,7 +38,7 @@ void DcmInformation::setAttributes(int tag1, int tag2, int num)
    OFString ofstr;
    AttrElements attres;
 
-   if( data->findAndGetElement(DcmTagKey(tag1,tag2),element).good())
+   if( data.findAndGetElement(DcmTagKey(tag1,tag2),element).good())
    {
      attres.type = num;
      attres.vr = element->getTag().getVRName();
@@ -45,7 +46,7 @@ void DcmInformation::setAttributes(int tag1, int tag2, int num)
      attres.value = QString::fromStdString(ofstr.c_str());
      if(tag1==0x0008)
      {
-       if( data->findAndGetElement(DcmTagKey(tag1,tag2 + 0x0010),element).good())
+       if( data.findAndGetElement(DcmTagKey(tag1,tag2 + 0x0010),element).good())
        {
          element->getOFString(ofstr,0);
          attres.value += " " + QString::fromStdString(ofstr.c_str());
@@ -62,6 +63,7 @@ void DcmInformation::setAttributes(int tag1, int tag2, int num)
    info.append(attres);
 }
 
+
 QVector <AttrElements> DcmInformation::getAttributes()
 {
    setAttributes(0x0010,0x0020,0);
@@ -69,6 +71,7 @@ QVector <AttrElements> DcmInformation::getAttributes()
    setAttributes(0x0010,0x1010,2);
    setAttributes(0x0008,0x0020,3);
    setAttributes(0x0008,0x0023,4);
+
    return info;
 }
 
@@ -109,7 +112,7 @@ QPixmap DcmInformation::drawDcmImage(QString path)
     DicomImage di(&dfile, xfer,CIF_AcrNemaCompatibility, 0, 1);
 
     di.setWindow(512,1024);
-    //di.writeBMP("c:\\from_dicom.bmp",8);
+//    di.writeBMP("c:\\from_dicom.bmp",8);
 
 //    const DiPixel* decompressedPixels = di.getInterData();
 //    const uchar* indata = (const uchar*) decompressedPixels->getData();
