@@ -22,11 +22,11 @@ HEADERS  += mainwindow.h\
 #DCMTK Lib setings for mac
 mac*{
 INCLUDEPATH += ../../dcmtk360/include
-LIBS +=  "C:\Program Files\DCMTK\lib\dcmdata.lib" \
-         "C:\Program Files\DCMTK\lib\dcmimage.lib" \
-         "C:\Program Files\DCMTK\lib\dcmimgle.lib" \
-         "C:\Program Files\DCMTK\lib\ofstd.lib" \
-         "C:\Program Files\DCMTK\lib\oflog.lib" \
+LIBS +=  "D:\Qt\DCMTK\lib\dcmdata.lib" \
+         "D:\Qt\DCMTK\lib\dcmimage.lib" \
+         "D:\Qt\DCMTK\lib\dcmimgle.lib" \
+         "D:\Qt\DCMTK\lib\ofstd.lib" \
+         "D:\Qt\DCMTK\lib\oflog.lib" \
         "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\AdvAPI32.Lib" \
         "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\WS2_32.Lib" \
         "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\netapi32.lib"
@@ -39,15 +39,16 @@ LIBS +=  -ldcmdata -ldcmimage -ldcmimgle -lofstd -loflog -lz
 }
 #DCMTK Lib setings for Windows
 win32{
-INCLUDEPATH += "D:\Qt\DCMTK\include"
+INCLUDEPATH += "D:/Qt/DCMTK/include"
     debug {
         LIBS +=  -L"D:\Qt\DCMTK\lib" -ldcmdata -ldcmimage -ldcmimgle -lofstd -loflog \
                  -lAdvAPI32 -lWS2_32 -lnetapi32
     }
     release {
-        LIBS +=  -L"D:\Qt\Workspace\DCMTK\lib-release" -ldcmdata -ldcmimage -ldcmimgle -lofstd -loflog \
+        LIBS +=  -L"D:\Qt\DCMTK\lib-release" -ldcmdata -ldcmimage -ldcmimgle -lofstd -loflog \
                  -lAdvAPI32 -lWS2_32 -lnetapi32
     }
 }
 
-FORMS    += mainwindow.ui
+FORMS    += \
+    mainwindow.ui

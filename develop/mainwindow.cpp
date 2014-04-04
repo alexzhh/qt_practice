@@ -27,18 +27,6 @@ void MainWindow::OpenFile()
             NewPatientInfo = FilePatientInfo;
             ResetPatientInfo();
         }
-    dcm = new DcmInformation();
-}
-void MainWindow::OpenFile()
-{
-    OpenFilePath = QFileDialog::getOpenFileName(this,QString::fromStdString("打开DCM文件"),QDir::currentPath(),"DCM文件(*.dcm)");
-    //QMessageBox::about(NULL,"",OpenFilePath);
-    dcm->openDcmFile(OpenFilePath);
-//    QVector<AttrElements> tmp = dcm->getAttributes();
-//    QMessageBox::information(this,"",tmp.at(0).value+tmp.at(0).vr);
-    ui->paint->setPixmap( dcm->drawDcmImage(OpenFilePath));
-
->>>>>>> 8b038af76e9989f16f4d8d8c509ea120e5e6d7dd:develop/mainwindow.cpp
 }
 
 void MainWindow::SaveFile()
@@ -119,5 +107,4 @@ void MainWindow::PaintDCM(QPixmap &DCMPix)
 MainWindow::~MainWindow()
 {
     delete ui;
-    delete dcm;
 }

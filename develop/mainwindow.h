@@ -25,7 +25,6 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    DcmInformation *dcm;
     QString OpenFilePath;
     QString SaveFilePath;
     QVector<AttrElements> FilePatientInfo;
