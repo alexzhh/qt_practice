@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
 }
 void MainWindow::OpenFile()
 {
-    QString OpenFilePath = QFileDialog::getOpenFileName(this,QString::fromStdString("打开DCM文件"),QDir::currentPath(),"DCM文件(*.dcm)");
+    OpenFilePath = QFileDialog::getOpenFileName(this,QString::fromStdString("打开DCM文件"),QDir::currentPath(),"DCM文件(*.dcm)");
         if(OpenFilePath!="")
         {
             dcm.openDcmFile(OpenFilePath);
@@ -31,7 +31,12 @@ void MainWindow::OpenFile()
 
 void MainWindow::SaveFile()
 {
-    QString SaveFilePath = QFileDialog::getSaveFileName(this,QString::fromStdString(""),QDir::currentPath(),"DCM文件(*.dcm)");
+    if(OpenFilePath=="")
+    {
+        QMessageBox::warning(this,"Warning","No File Opened!");
+        return ;
+    }
+    SaveFilePath = QFileDialog::getSaveFileName(this,QString::fromStdString(""),QDir::currentPath(),"DCM文件(*.dcm)");
         if(SaveFilePath!="")
         {
             //QMessageBox::about(NULL,"",SaveFilePath);
@@ -52,7 +57,7 @@ void MainWindow::QuitWindows()
 
 void MainWindow::EditModeChanged(bool EditChecked)
 {
-    if(EditChecked)   //Edit选中时
+    if(EditChecked)   //Edit checked
     {
         ui->btn_Reset->setHidden(false);
         ui->btn_Save->setHidden(false);
@@ -67,7 +72,8 @@ void MainWindow::EditModeChanged(bool EditChecked)
         ui->Name->setReadOnly(true);
         ui->ID->setReadOnly(true);
         ui->Age->setReadOnly(true);
-
+        ui->ImageTime->setReadOnly(true);
+        ui->StudyTime->setReadOnly(true);
     }
 }
 
@@ -87,7 +93,7 @@ void MainWindow::SavePatientInfo2File()
 {
     if(FilePatientInfo != NewPatientInfo)
     {
-        //Do Write File
+
     }
 }
 
@@ -97,6 +103,11 @@ void MainWindow::ResetPatientInfo()
     {
         FillPatientInfo(PatientInfo(element.type),element.value);
     }
+}
+
+void MainWindow::GetInputText()
+{
+
 }
 
 void MainWindow::PaintDCM(QPixmap &DCMPix)
