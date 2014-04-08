@@ -1,14 +1,14 @@
 #ifndef DCMINFORMATION_H
 #define DCMINFORMATION_H
 
-#include <dcmtk\config\osconfig.h>
-#include <dcmtk\dcmdata\dctk.h>
-#include <dcmtk\dcmimgle\dcmimage.h>
+#include <dcmtk/config/osconfig.h>
+#include <dcmtk/dcmdata/dctk.h>
+#include <dcmtk/dcmimgle/dcmimage.h>
 #include <QVector>
-#include <QString>
 #include <QtXml/QDomDocument>
 #include <QMessageBox>
 #include <QImage>
+#include "fileinputoutput.h"
 
 //#define PatientID         0x0020
 //#define PatientName       0x0010
@@ -33,21 +33,21 @@ typedef struct AttrElements
 }AttrElements;
 
 class DcmInformation
+   :public FileInputOutput,
+    public DcmFileFormat
+
 {
    private:
      QVector <AttrElements> info;
-     DcmDataset data;
    public:
      DcmInformation();
      ~DcmInformation();
-     void openDcmFile(QString);        //打开dcm文件
-     void fileChecksum();           //文件的校验
+     BOOL initial();
+     BOOL fileChecksum();           //file check
      void setAttributes(int, int, int);
-     QVector <AttrElements> getAttributes(); //返回五个tag 以及 相应的value
-     DcmDataset getDcmData();    //返回dcm数据
-     QPixmap drawDcmImage(QString);  //返回绘图指针
-     QDomDocument dcm2Xml(); //以下三个可先不实现
-     void saveDcmAs();
-     void saveXml();
+     QVector <AttrElements> getAttributes(); //return tags
+     QPixmap drawDcmImage(int width,int height); //return paint pixel object
+//     QDomDocument dcm2Xml();
 };
+
 #endif
