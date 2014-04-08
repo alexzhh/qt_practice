@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "savefile.h"
 
 using std::string;
 
@@ -19,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
 }
 void MainWindow::OpenFile()
 {
-    QString OpenFilePath = QFileDialog::getOpenFileName(this,QString::fromStdString("打开DCM文件"),QDir::currentPath(),"DCM文件(*.dcm)");
+        OpenFilePath = QFileDialog::getOpenFileName(this,QString::fromStdString("打开DCM文件"),QDir::currentPath(),"DCM文件(*.dcm)");
         if(OpenFilePath!="")
         {
             dcm.openDcmFile(OpenFilePath);
@@ -31,15 +32,25 @@ void MainWindow::OpenFile()
 
 void MainWindow::SaveFile()
 {
-    QString SaveFilePath = QFileDialog::getSaveFileName(this,QString::fromStdString(""),QDir::currentPath(),"DCM文件(*.dcm)");
+    if(!OpenFilePath.isEmpty())
+    {
+     SaveFilePath = QFileDialog::getSaveFileName(this,QString::fromStdString(""),QDir::currentPath(),"DCM文件(*.dcm);;XML文件(*.xml)");
         if(SaveFilePath!="")
         {
             //QMessageBox::about(NULL,"",SaveFilePath);
             //Do Save File
+ //           dcm->getDcmData().saveFile(SaveFilePath.toStdString().c_str());
+          savefile save;
+           save.saveFile(SaveFilePath,OpenFilePath);
         }
+    }
+    if(OpenFilePath.isEmpty())
+    {
+        QMessageBox::warning (this,tr("警告!"),tr(" 没有文件被打开!                "),QMessageBox::NoButton,QMessageBox::Cancel);
+
+    }
 
 }
-
 void MainWindow::QuitWindows()
 {
     if(QMessageBox::warning(this,QString::fromStdString("Warning"),
