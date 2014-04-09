@@ -46,7 +46,7 @@ void MainWindow::SaveFile()
     }
     if(OpenFilePath.isEmpty())
     {
-        QMessageBox::warning (this,tr("警告!"),tr(" 没有文件被打开!                "),QMessageBox::NoButton,QMessageBox::Cancel);
+        QMessageBox::warning (this,tr("warning !"),tr(" No file is opened!                "),QMessageBox::NoButton,QMessageBox::Cancel);
 
     }
 
