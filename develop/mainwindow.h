@@ -33,6 +33,7 @@ private:
     DcmDataset data;
 public:
     void PaintDCM(QPixmap &DCMPix);
+    void GetInputText();
 public slots:
     void OpenFile();
     void SaveFile();

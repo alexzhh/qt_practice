@@ -23,11 +23,18 @@ void MainWindow::OpenFile()
         OpenFilePath = QFileDialog::getOpenFileName(this,QString::fromStdString("打开DCM文件"),QDir::currentPath(),"DCM文件(*.dcm)");
         if(OpenFilePath!="")
         {
-            dcm.openDcmFile(OpenFilePath);
+            dcm.OpenFile(OpenFilePath);
             FilePatientInfo=dcm.getAttributes();
             NewPatientInfo = FilePatientInfo;
             ResetPatientInfo();
         }
+    if(dcm.initial())
+     {
+       PaintDCM(dcm.drawDcmImage(ui->DCMPaint->width(),ui->DCMPaint->height()));
+       FilePatientInfo=dcm.getAttributes();
+       NewPatientInfo = FilePatientInfo;
+       ResetPatientInfo();
+     }
 }
 
 void MainWindow::SaveFile()
@@ -47,6 +54,17 @@ void MainWindow::SaveFile()
     if(OpenFilePath.isEmpty())
     {
         QMessageBox::warning (this,tr("warning !"),tr(" No file is opened!                "),QMessageBox::NoButton,QMessageBox::Cancel);
+//    if(OpenFilePath=="")
+//    {
+//        QMessageBox::warning(this,"Warning","No File Opened!");
+//        return ;
+//    }
+//    SaveFilePath = QFileDialog::getSaveFileName(this,QString::fromStdString(""),QDir::currentPath(),"DCM文件(*.dcm)");
+//        if(SaveFilePath!="")
+//        {
+//            //QMessageBox::about(NULL,"",SaveFilePath);
+//            //Do Save File
+//        }
 
     }
 
@@ -63,7 +81,7 @@ void MainWindow::QuitWindows()
 
 void MainWindow::EditModeChanged(bool EditChecked)
 {
-    if(EditChecked)   //Edit选中时
+    if(EditChecked)   //Edit checked
     {
         ui->btn_Reset->setHidden(false);
         ui->btn_Save->setHidden(false);
@@ -78,7 +96,8 @@ void MainWindow::EditModeChanged(bool EditChecked)
         ui->Name->setReadOnly(true);
         ui->ID->setReadOnly(true);
         ui->Age->setReadOnly(true);
-
+        ui->ImageTime->setReadOnly(true);
+        ui->StudyTime->setReadOnly(true);
     }
 }
 
@@ -98,7 +117,7 @@ void MainWindow::SavePatientInfo2File()
 {
     if(FilePatientInfo != NewPatientInfo)
     {
-        //Do Write File
+
     }
 }
 
@@ -108,6 +127,11 @@ void MainWindow::ResetPatientInfo()
     {
         FillPatientInfo(PatientInfo(element.type),element.value);
     }
+}
+
+void MainWindow::GetInputText()
+{
+
 }
 
 void MainWindow::PaintDCM(QPixmap &DCMPix)
