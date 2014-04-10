@@ -15,12 +15,10 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp\
         dcminformation.cpp \
-    savefile.cpp \
     fileinputoutput.cpp
 
 HEADERS  += mainwindow.h\
         dcminformation.h \
-    savefile.h \
     fileinputoutput.h
 
 #DCMTK Lib setings for mac
