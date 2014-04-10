@@ -17,6 +17,8 @@ BOOL DcmInformation::initial(QString filePath)
 {
    OFCondition oc = this->loadFile(
     filePath.toStdString().c_str());
+
+
    if(oc.bad() || fileChecksum())
      return FALSE;
 

@@ -43,6 +43,7 @@ class DcmInformation
      DcmInformation();
      ~DcmInformation();
      BOOL initial(QString);
+
      BOOL fileChecksum();           //file check
      void setAttributes(int, int, int);
      QVector <AttrElements> getAttributes(); //return tags
