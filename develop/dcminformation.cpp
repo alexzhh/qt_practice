@@ -13,10 +13,12 @@ DcmInformation::~DcmInformation()
 }
 
 
-BOOL DcmInformation::initial()
+BOOL DcmInformation::initial(QString filePath)
 {
    OFCondition oc = this->loadFile(
-     OpenFile("DCM File(*.dcm)").toStdString().c_str());
+    filePath.toStdString().c_str());
+
+
    if(oc.bad() || fileChecksum())
      return FALSE;
 

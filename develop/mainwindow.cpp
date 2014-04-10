@@ -19,8 +19,10 @@ MainWindow::MainWindow(QWidget *parent) :
 }
 void MainWindow::OpenFile()
 {
-    if(dcm.initial())
+
+    if(dcm.initial(OpenFilePath))
      {
+
        PaintDCM(dcm.drawDcmImage(ui->DCMPaint->width(),ui->DCMPaint->height()));
        FilePatientInfo=dcm.getAttributes();
        NewPatientInfo = FilePatientInfo;
