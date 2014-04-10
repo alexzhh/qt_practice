@@ -25,6 +25,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QString OpenFileStype;
     QString OpenFilePath;
     QString SaveFilePath;
     QVector<AttrElements> FilePatientInfo;
@@ -33,6 +34,7 @@ private:
     DcmDataset data;
 public:
     void PaintDCM(QPixmap &DCMPix);
+    void GetInputText();
 public slots:
     void OpenFile();
     void SaveFile();

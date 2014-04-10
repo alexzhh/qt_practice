@@ -22,13 +22,14 @@ bool savefile::saveFile(QString fileName,QString openfilepath)
     DcmInformation doc;
     if(!openfilepath.isEmpty())
     {
-    doc.openDcmFile(openfilepath.toStdString().c_str());
-    if(!doc.getDcmData().isEmpty())
+    doc.loadFile(openfilepath.toStdString().c_str());
+    if(!doc.getDataset()->isEmpty())
     {
         if(fileName.endsWith(".dcm"))
-    doc.getDcmData().saveFile(fileName.toStdString().c_str());
+    doc.getDataset()->saveFile(fileName.toStdString().c_str());
     if(fileName.endsWith(".xml"))
     {
+
 ///*        DcmFileFormat fileFormat;
 //        DcmMetaInfo     fileMetaIfo;
 //        DcmDataset          fileDataset*/;
