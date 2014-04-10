@@ -25,7 +25,6 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    QString OpenFileStype;
     QString OpenFilePath;
     QString SaveFilePath;
     QVector<AttrElements> FilePatientInfo;

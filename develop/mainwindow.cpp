@@ -19,10 +19,8 @@ MainWindow::MainWindow(QWidget *parent) :
 }
 void MainWindow::OpenFile()
 {
-
-    if(dcm.initial(OpenFilePath))
+    if(dcm.initial())
      {
-
        PaintDCM(dcm.drawDcmImage(ui->DCMPaint->width(),ui->DCMPaint->height()));
        FilePatientInfo=dcm.getAttributes();
        NewPatientInfo = FilePatientInfo;
@@ -32,17 +30,7 @@ void MainWindow::OpenFile()
 
 void MainWindow::SaveFile()
 {
-//    if(OpenFilePath=="")
-//    {
-//        QMessageBox::warning(this,"Warning","No File Opened!");
-//        return ;
-//    }
-//    SaveFilePath = QFileDialog::getSaveFileName(this,QString::fromStdString(""),QDir::currentPath(),"DCM文件(*.dcm)");
-//        if(SaveFilePath!="")
-//        {
-//            //QMessageBox::about(NULL,"",SaveFilePath);
-//            //Do Save File
-//        }
+
 
 }
 
