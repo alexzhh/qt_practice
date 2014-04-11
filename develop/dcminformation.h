@@ -5,10 +5,9 @@
 #include <dcmtk/dcmdata/dctk.h>
 #include <dcmtk/dcmimgle/dcmimage.h>
 #include <QVector>
-#include <QString>
-#include <QtXml/QDomDocument>
 #include <QMessageBox>
 #include <QImage>
+#include "fileinputoutput.h"
 
 //#define PatientID         0x0020
 //#define PatientName       0x0010
@@ -18,36 +17,22 @@
 //#define PatientImageDate (0x0008,0x0023)
 //#define PatientImageTime (0x0008,0x0033)
 
-typedef struct AttrElements
-{
-  int type;
-  QString vr;
-  QString value;
-  bool operator ==(AttrElements &other)
-  {
-    return (type == other.type &&
-            vr   == other.vr   &&
-            value== other.value );
-  }
-
-}AttrElements;
-
 class DcmInformation
+   :public FileInputOutput,
+    public DcmFileFormat
+
 {
    private:
-     QVector <AttrElements> info;
-     DcmDataset data;
+     QVector <DcmElement*> info;
+     void setAttributes(int, int);
    public:
      DcmInformation();
      ~DcmInformation();
-     void openDcmFile(QString);        //打开dcm文件
-     void fileChecksum();           //文件的校验
-     void setAttributes(int, int, int);
-     QVector <AttrElements> getAttributes(); //返回五个tag 以及 相应的value
-     DcmDataset getDcmData();    //返回dcm数据
-     QPixmap drawDcmImage(QString);  //返回绘图指针
-     QDomDocument dcm2Xml(); //以下三个可先不实现
-     void saveDcmAs();
-     void saveXml();
+     BOOL initial(QString);
+     BOOL fileChecksum(); //file check
+     QVector <DcmElement*> getAttributes(); //return tags
+     QPixmap drawDcmImage(int width,int height); //return paint pixel object
+     void dcm2Xml(QString,QString);
 };
+
 #endif

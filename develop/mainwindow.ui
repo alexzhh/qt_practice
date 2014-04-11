@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="title">
-     <string>Paient Information</string>
+     <string>Patient Information</string>
     </property>
     <widget class="QLineEdit" name="Name">
      <property name="geometry">

@@ -13,142 +13,106 @@ DcmInformation::~DcmInformation()
 }
 
 
-void DcmInformation::openDcmFile(QString path)
+BOOL DcmInformation::initial(QString OpenPath)
 {
-   DcmFileFormat fileformat;
-   OFCondition oc = fileformat.loadFile( path.toStdString().c_str());
-   if(oc.good())
-     data = *fileformat.getDataset();
-   else
-   {
-     //errorMessage
-   }
+   OFCondition oc = this->loadFile(OpenPath.toStdString().c_str());
+
+   if(oc.bad() || fileChecksum())
+     return FALSE;
+
+   return TRUE;
 }
 
 
-DcmDataset DcmInformation::getDcmData()
+void DcmInformation::setAttributes(int tag1, int tag2)
 {
-   return data;
+   DcmElement * element = NULL;
+   if(this->getDataset()->findAndGetElement(DcmTagKey(tag1,tag2),element).bad())
+     element = NULL;
+
+   info.append(element);
 }
 
 
-void DcmInformation::setAttributes(int tag1, int tag2, int num)
+QVector <DcmElement*> DcmInformation::getAttributes()
 {
-   DcmElement * element;
-   OFString ofstr;
-   AttrElements attres;
-
-   if( data.findAndGetElement(DcmTagKey(tag1,tag2),element).good())
-   {
-     attres.type = num;
-     attres.vr = element->getTag().getVRName();
-     element->getOFString(ofstr,0);
-     attres.value = QString::fromStdString(ofstr.c_str());
-     if(tag1==0x0008)
-     {
-       if( data.findAndGetElement(DcmTagKey(tag1,tag2 + 0x0010),element).good())
-       {
-         element->getOFString(ofstr,0);
-         attres.value += " " + QString::fromStdString(ofstr.c_str());
-       }
-     }
-    }
-   else
-   {
-     attres.type = 0;
-     attres.vr = attres.value = "";
-     //errorMessage
-   }
-
-   info.append(attres);
-}
-
-
-QVector <AttrElements> DcmInformation::getAttributes()
-{
-   setAttributes(0x0010,0x0020,0);
-   setAttributes(0x0010,0x0010,1);
-   setAttributes(0x0010,0x1010,2);
-   setAttributes(0x0008,0x0020,3);
-   setAttributes(0x0008,0x0023,4);
+   setAttributes(0x0010,0x0020);
+   setAttributes(0x0010,0x0010);
+   setAttributes(0x0010,0x1010);
+   setAttributes(0x0008,0x0020);
+   setAttributes(0x0008,0x0023);
 
    return info;
 }
 
 
-void DcmInformation::fileChecksum()
+BOOL DcmInformation::fileChecksum()
 {
+   OFCondition oc = this->validateMetaInfo(
+       this->getDataset()->getOriginalXfer());
+   //check the MetaInfo
+   if(oc.bad())
+     return TRUE;
+   //check the dataset
+   DcmElement *dcmElement = NULL;
+   DcmTag dcmtag;
+   int count = 0;
 
+   while(TRUE)
+   { //do foreach operation
+     dcmElement = this->getDataset()->getElement(count++);
+     dcmtag = dcmElement->getTag();
+     //here do check data
+     //..................
+
+     if( "(7fe0,0010)" == QString(dcmtag.toString().c_str()))
+      break;
+   }
+
+   return FALSE;
 }
 
 
-QPixmap DcmInformation::drawDcmImage(QString path)
+QPixmap DcmInformation::drawDcmImage(int width, int height)
 {
-//  DicomImage dicomimage(filename.toStdString().c_str());
-//  const DiPixel* decompressedPixels = dicomimage.getInterData();
-//  const uchar* indata = (const uchar*) decompressedPixels->getData();
-//  QImage* renderedQImage = NULL;
-// // data->findAndGetElement(DCM_PixelData,element);
-//  int width, height;
-//  width = dicomimage.getWidth();
-//  height = dicomimage.getHeight();
-//  //creat the internal QImage object
-//  if(renderedQImage == NULL)
-//  {
-//      renderedQImage = new QImage(width,height, QImage::Format_ARGB32);
-//  }
-
-//  if(dicomimage.isMonochrome())
-//   {
-//    const char* indata = (const char*) decompressedPixels->getData();
-//    mapMonochromeDICOMImageToQImage(indata, renderedQImage);
-//   }
-//  QImage(indata,width,height);
-//  return QPixmap::fromImage( QImage(indata,width,height,QImage::Format_ARGB32));
-
-    DcmFileFormat dfile ;
-    OFCondition cond = dfile.loadFile(path.toStdString().c_str());
-    E_TransferSyntax xfer = dfile.getDataset()->getOriginalXfer();
-    DicomImage di(&dfile, xfer,CIF_AcrNemaCompatibility, 0, 1);
-
-    di.setWindow(512,1024);
-//    di.writeBMP("c:\\from_dicom.bmp",8);
-
-//    const DiPixel* decompressedPixels = di.getInterData();
-//    const uchar* indata = (const uchar*) decompressedPixels->getData();
-
-//    int width, height;
-//      width = di.getWidth();
-//      height = di.getHeight();
-
-    QImage im(di.getWidth(),di.getHeight(),QImage::Format_ARGB32);
+   E_TransferSyntax transf = this->getDataset()->getOriginalXfer();
+   DicomImage dicom( this->getDataset(),
+                     transf,
+                     CIF_AcrNemaCompatibility, 0, 1);
+   //set window center and width
+   dicom.setWindow(512,1024);
+   dicom.writeBMP("c:\\dicom.bmp",8);
+   QImage qimage("c:\\dicom.bmp");
+   QFile::remove("c:\\dicom.bmp");
+   return QPixmap::fromImage(qimage.scaled(width,height));
+   //return NULL;
+}
 
 
-//    int width = im.width();
-//    int height = im.height();
-//    for(int i = 0 ; i < height ; i++)
-//    {
-//        uchar* out = im.scanLine(i);
-
-
-//        for(int j = 0 ; j < width ; j++)
-//        {
-//            float invalue = *(indata + i*width + j);
-//            float color = (invalue - 217)/512 *255.0+127.5;
-//            if(color < 0.0)
-//                color = 0.0;
-//            else if (color > 255.0)
-//                color = 255.0;
-//            uchar ucolor = (uchar) roundf(color);
-
-//            *out++ = ucolor; //R
-//            *out++ = ucolor; //G
-//            *out++ = ucolor; //B
-//            *out++ = 0xff; //A
-
-//        }
-//    }
-
-    return QPixmap::fromImage(im);
-    // return NULL;
+void DcmInformation::dcm2Xml(QString fileName,QString openfilepath)
+{
+   if(!openfilepath.isEmpty() && !this->getDataset()->isEmpty())
+   {
+//     if(fileName.endsWith(".dcm"))
+     if(fileName.right(3).toLower() == "dcm")
+       this->saveFile(fileName.toStdString().c_str());
+//     if(fileName.endsWith(".xml"))
+     if(fileName.right(3).toLower() == "xml")
+     {
+//      QXmlStreamReader xmlReader;
+//       QFile file(fileName.toStdString().c_str());
+//        if(!file.open(QIODevice::ReadWrite))
+//            return false;
+//        QTextStream out(&file);
+//        out<<"<?xml version=\"1.0\" ?>\n";
+//        file.close();
+//       if(!file.open(QIODevice::ReadWrite))
+//         return;
+       std::ofstream myfile(fileName.toStdString().c_str());
+       myfile<<"<?xml version=\"1.0\" ?>\n";
+//       this->loadFile(openfilepath.toStdString().c_str());
+       this->writeXML(myfile);
+       myfile.close();
+     }
+   }
 }
