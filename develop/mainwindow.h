@@ -2,14 +2,10 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QMessageBox>
 #include <QTextDecoder>
-#include <QFile>
-#include <QPixmap>
-#include <QFileDialog>
 #include <QAbstractItemModel>
-#include <QString>
 #include "dcminformation.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -26,14 +22,11 @@ public:
 private:
     Ui::MainWindow *ui;
     QString OpenFilePath;
-    QString SaveFilePath;
-    QVector<AttrElements> FilePatientInfo;
-    QVector<AttrElements> NewPatientInfo;
+    QVector<DcmElement*> FilePatientInfo;
+    QVector<DcmElement*> NewPatientInfo;
     DcmInformation dcm;
-    DcmDataset data;
 public:
     void PaintDCM(QPixmap &DCMPix);
-    void GetInputText();
 public slots:
     void OpenFile();
     void SaveFile();

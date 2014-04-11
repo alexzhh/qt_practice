@@ -5,7 +5,6 @@
 #include <dcmtk/dcmdata/dctk.h>
 #include <dcmtk/dcmimgle/dcmimage.h>
 #include <QVector>
-#include <QtXml/QDomDocument>
 #include <QMessageBox>
 #include <QImage>
 #include "fileinputoutput.h"
@@ -18,36 +17,22 @@
 //#define PatientImageDate (0x0008,0x0023)
 //#define PatientImageTime (0x0008,0x0033)
 
-typedef struct AttrElements
-{
-  int type;
-  QString vr;
-  QString value;
-  bool operator ==(AttrElements &other)
-  {
-    return (type == other.type &&
-            vr   == other.vr   &&
-            value== other.value );
-  }
-
-}AttrElements;
-
 class DcmInformation
    :public FileInputOutput,
     public DcmFileFormat
 
 {
    private:
-     QVector <AttrElements> info;
+     QVector <DcmElement*> info;
+     void setAttributes(int, int);
    public:
      DcmInformation();
      ~DcmInformation();
-     BOOL initial();
-     BOOL fileChecksum();           //file check
-     void setAttributes(int, int, int);
-     QVector <AttrElements> getAttributes(); //return tags
+     BOOL initial(QString);
+     BOOL fileChecksum(); //file check
+     QVector <DcmElement*> getAttributes(); //return tags
      QPixmap drawDcmImage(int width,int height); //return paint pixel object
-//     QDomDocument dcm2Xml();
+     void dcm2Xml(QString,QString);
 };
 
 #endif
