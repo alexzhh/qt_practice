@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->actionSave_As,SIGNAL(triggered()),SLOT(SaveFile()));
     QObject::connect(ui->actionEdit,SIGNAL(triggered(bool)),this,SLOT(EditModeChanged(bool)));
     QObject::connect(ui->btn_Reset,SIGNAL(clicked()),SLOT(ResetPatientInfo()));
+    QObject::connect(ui->btn_Save,SIGNAL(clicked()),SLOT(SavePatientInfo2File()));
     emit EditModeChanged(false);
     //QMessageBox::about(NULL,"",QString::number(ui->tableWidget->rowCount())+QString::number(ui->tableWidget->columnCount()));
 
@@ -89,10 +90,13 @@ void MainWindow::FillPatientInfo(PatientInfo Type, QString ValueFiled)
 
 void MainWindow::SavePatientInfo2File()
 {
-//    if(FilePatientInfo != NewPatientInfo)
-//    {
-//        //Do Write File
-//    }
+    DcmDataset* Data=dcm.getDataset();
+    Data->putAndInsertString(DCM_PatientName,ui->Name->text().toStdString().c_str());
+    Data->putAndInsertString(DCM_PatientID,ui->ID->text().toStdString().c_str());
+    Data->putAndInsertString(DCM_PatientAge,ui->Age->text().toStdString().c_str());
+    Data->putAndInsertString(DCM_StudyDate,ui->StudyTime->text().toStdString().c_str());
+    Data->putAndInsertString(DCM_ContentDate,ui->ImageTime->text().toStdString().c_str());
+    dcm.saveFile(OpenFilePath.toStdString().c_str());
 }
 
 void MainWindow::ResetPatientInfo()
