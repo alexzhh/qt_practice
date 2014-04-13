@@ -36,10 +36,11 @@ void MainWindow::SaveFile()
    if(!OpenFilePath.isEmpty())
    {
      QString spath = dcm.SaveFile("DCM File(*.dcm);;XML File(*.xml)");
-     dcm.dcm2Xml(spath,OpenFilePath);
+     //QMessageBox::about(NULL,"",spath);
+     dcm.dcm2Xml(spath/*,OpenFilePath*/);
    }
    else
-    QMessageBox::about(
+    QMessageBox::warning(
                 this,"DCM",
                 "Source file not found,please open file first");
 }
@@ -56,8 +57,15 @@ void MainWindow::QuitWindows()
 
 void MainWindow::EditModeChanged(bool EditChecked)
 {
+
     if(EditChecked)   //Edit Checked
     {
+        if(OpenFilePath.isEmpty())
+        {
+            QMessageBox::warning(this,"Error","No File Opened!");
+            ui->actionEdit->setChecked(false);
+            return ;
+        }
         ui->btn_Reset->setHidden(false);
         ui->btn_Save->setHidden(false);
         ui->Name->setReadOnly(false);

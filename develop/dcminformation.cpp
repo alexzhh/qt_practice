@@ -189,9 +189,9 @@ uchar DcmInformation::colorPalette(float value)
 }
 
 
-void DcmInformation::dcm2Xml(QString fileName,QString openfilepath)
+void DcmInformation::dcm2Xml(QString fileName/*,QString openfilepath*/)
 {
-   if(!openfilepath.isEmpty() && !this->getDataset()->isEmpty())
+   if(!fileName.isEmpty() && !this->getDataset()->isEmpty())
    {
 //     if(fileName.endsWith(".dcm"))
      if(fileName.toLower().endsWith(".dcm"))

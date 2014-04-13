@@ -36,7 +36,7 @@ class DcmInformation
      void MonochromeColorTrans(const T * pixelData);
      uchar colorPalette(float);
      QPixmap drawDcmImage(int width,int height); //return paint pixel object
-     void dcm2Xml(QString,QString);
+     void dcm2Xml(QString/*,QString*/);
 };
 
 #endif
