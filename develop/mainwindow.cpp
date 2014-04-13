@@ -20,24 +20,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::OpenFile()
 {
-//   DcmElement *dcmelement = NULL;
    OpenFilePath = dcm.OpenFile("DCM File(*.dcm)");
    if(dcm.initial(OpenFilePath))
     {
       PaintDCM(dcm.drawDcmImage(ui->DCMPaint->width(),ui->DCMPaint->height()));
       FilePatientInfo = dcm.getAttributes();
-//      for(int i=0;i<FilePatientInfo.length();++i)
-//      {
-//        dcmelement = FilePatientInfo.at(i);
-//        if(dcmelement != NULL)
-//        {
-//          DcmTag tag = dcmelement->getTag();
-//          QMessageBox::about(
-//                  this,"DCM",QString(tag.toString().c_str()));
-//        }
-//      }
-//      NewPatientInfo = FilePatientInfo;
-//      ResetPatientInfo();
+      NewPatientInfo = FilePatientInfo;
+      ResetPatientInfo();
     }
 }
 
@@ -66,7 +55,7 @@ void MainWindow::QuitWindows()
 
 void MainWindow::EditModeChanged(bool EditChecked)
 {
-    if(EditChecked)   //Edit选中时
+    if(EditChecked)   //Edit Checked
     {
         ui->btn_Reset->setHidden(false);
         ui->btn_Save->setHidden(false);
@@ -88,14 +77,14 @@ void MainWindow::EditModeChanged(bool EditChecked)
 
 void MainWindow::FillPatientInfo(PatientInfo Type, QString ValueFiled)
 {
-//    switch(Type)
-//    {
-//    case PatientID:  ui->ID->setText(ValueFiled);break;
-//    case PatientName:ui->Name->setText(ValueFiled);break;
-//    case PatientAge: ui->Age->setText(ValueFiled);break;
-//    case PatientStudyTime:ui->StudyTime->setText(ValueFiled);break;
-//    case PatientImageTime:ui->ImageTime->setText(ValueFiled);break;
-//    }
+    switch(Type)
+    {
+    case PatientID:  ui->ID->setText(ValueFiled);break;
+    case PatientName:ui->Name->setText(ValueFiled);break;
+    case PatientAge: ui->Age->setText(ValueFiled);break;
+    case StudyData:ui->StudyTime->setText(ValueFiled);break;
+    case ContentData:ui->ImageTime->setText(ValueFiled);break;
+    }
 }
 
 void MainWindow::SavePatientInfo2File()
@@ -108,10 +97,17 @@ void MainWindow::SavePatientInfo2File()
 
 void MainWindow::ResetPatientInfo()
 {
-//    foreach(AttrElements element,NewPatientInfo)
-//    {
-//        FillPatientInfo(PatientInfo(element.type),element.value);
-//    }
+    int index=0;
+    foreach(DcmElement* dc,FilePatientInfo)
+    {
+        if(dc!=NULL)
+        {
+            OFString ValueFiled="";
+            dc->getOFString(ValueFiled,0);
+            FillPatientInfo(PatientInfo(index),ValueFiled.c_str());
+        }
+            index++;
+    }
 }
 
 void MainWindow::PaintDCM(QPixmap &DCMPix)
