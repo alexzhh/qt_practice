@@ -25,14 +25,18 @@ class DcmInformation
    private:
      QVector <DcmElement*> info;
      void setAttributes(int, int);
+     QImage *qimage;
    public:
      DcmInformation();
      ~DcmInformation();
-     BOOL initial(QString);
-     BOOL fileChecksum(); //file check
+     bool initial(QString);
+     bool fileChecksum(); //file check
      QVector <DcmElement*> getAttributes(); //return tags
+     template <typename T>
+     void MonochromeColorTrans(const T * pixelData);
+     uchar colorPalette(float);
      QPixmap drawDcmImage(int width,int height); //return paint pixel object
-     void dcm2Xml(QString,QString);
+     void dcm2Xml(QString/*,QString*/);
 };
 
 #endif

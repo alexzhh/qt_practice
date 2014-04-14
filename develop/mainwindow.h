@@ -15,7 +15,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    enum PatientInfo{PatientID=0,PatientName,PatientAge,PatientStudyTime,PatientImageTime};
+    enum PatientInfo{PatientID=0,PatientName,PatientAge,StudyData,ContentData};
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
