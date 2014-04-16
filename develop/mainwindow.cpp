@@ -24,7 +24,9 @@ void MainWindow::OpenFile()
    OpenFilePath = dcm.OpenFile("DCM File(*.dcm)");
    if(dcm.initial(OpenFilePath))
     {
-      PaintDCM(dcm.drawDcmImage(ui->DCMPaint->width(),ui->DCMPaint->height()));
+
+      QPixmap qmap = dcm.drawDcmImage(ui->DCMPaint->width(),ui->DCMPaint->height());
+      PaintDCM(qmap);
       FilePatientInfo = dcm.getAttributes();
       NewPatientInfo = FilePatientInfo;
       ResetPatientInfo();

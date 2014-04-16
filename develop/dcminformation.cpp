@@ -185,7 +185,8 @@ uchar DcmInformation::colorPalette(float value)
    else if(color > 255.0)
      return 255.0;
    else
-     return (uchar)roundf(color);
+     return (uchar)(10*((color + 5) / 10));
+     //return (uchar)(roundf(color));
 }
 
 
