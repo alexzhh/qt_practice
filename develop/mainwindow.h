@@ -28,14 +28,14 @@ private:
 public:
     void PaintDCM(QPixmap &DCMPix);
 public slots:
-    void OpenFile();
+    void OpenFile(bool NewFile=true);
     void SaveFile();
     void QuitWindows();
     void EditModeChanged(bool);
     void FillPatientInfo(PatientInfo Type,QString ValueFiled);
     void SavePatientInfo2File();
     void ResetPatientInfo();
-    //void CheckDataValid();
+    void CheckDataValid();
 };
 
 #endif // MAINWINDOW_H

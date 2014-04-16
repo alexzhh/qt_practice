@@ -19,9 +19,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
 }
 
-void MainWindow::OpenFile()
+void MainWindow::OpenFile(bool NewFile)
 {
-   OpenFilePath = dcm.OpenFile("DCM File(*.dcm)");
+   if(NewFile)
+    OpenFilePath = dcm.OpenFile("DCM File(*.dcm)");
    if(dcm.initial(OpenFilePath))
     {
 
@@ -107,6 +108,7 @@ void MainWindow::SavePatientInfo2File()
     Data->putAndInsertString(DCM_StudyDate,ui->StudyTime->text().toStdString().c_str());
     Data->putAndInsertString(DCM_ContentDate,ui->ImageTime->text().toStdString().c_str());
     dcm.saveFile(OpenFilePath.toStdString().c_str());
+    OpenFile(false);
 }
 
 void MainWindow::ResetPatientInfo()
@@ -120,6 +122,10 @@ void MainWindow::ResetPatientInfo()
             dc->getOFString(ValueFiled,0);
             FillPatientInfo(PatientInfo(index),ValueFiled.c_str());
         }
+        else
+        {
+            FillPatientInfo(PatientInfo(index),"");
+        }
             index++;
     }
 }
@@ -127,6 +133,11 @@ void MainWindow::ResetPatientInfo()
 void MainWindow::PaintDCM(QPixmap &DCMPix)
 {
     ui->DCMPaint->setPixmap(DCMPix);
+}
+
+void MainWindow::CheckDataValid()
+{
+
 }
 
 MainWindow::~MainWindow()
