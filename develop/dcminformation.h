@@ -25,6 +25,8 @@ class DcmInformation
 
      void setAttributes(int, int);
      QImage *qimage;
+     int Image_width;
+     int Image_height;
 
      QString inputFilePath; // Loading file path
      QString outputFilePath; // saving file path
@@ -34,10 +36,9 @@ class DcmInformation
    public:
      DcmInformation(QString iPath, QString oPath="");
      ~DcmInformation();
-     //bool initial(QString);
+
      bool loadFromDCM(); // load DCM data from *.dcm (inputFilePath)
      QString getStringlizeTag(const DcmTag& dcmtag);
-     // bool fileChecksum(); // file check
      bool endOfDataSet(const DcmTag& dcmtag);
      bool isValid(); // check file format
      void customSaveFile();
@@ -52,7 +53,11 @@ class DcmInformation
      void setOutputFile(QString oPath);
      QString getInuptFile();
      bool isLoaded();
-     //void dcm2Xml(QString/*,QString*/);
+     void drawMonochrome(DicomImage &dicomImage, int width, int height);
+     void drawRGB(DicomImage &dicomImage, int width, int height);
+     void prepareQImage(DicomImage &dicomImage, QImage::Format FormatType, int width, int height);
+     void drawMonochromeAlux(DicomImage &dicomImage);
+     void drawRGBAlux(DicomImage &dicomImage);
 };
 
 #endif
