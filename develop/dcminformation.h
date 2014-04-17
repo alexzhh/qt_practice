@@ -7,7 +7,6 @@
 #include <QVector>
 #include <QMessageBox>
 #include <QImage>
-#include "fileinputoutput.h"
 
 //#define PatientID         0x0020
 //#define PatientName       0x0010
@@ -18,8 +17,7 @@
 //#define PatientImageTime (0x0008,0x0033)
 
 class DcmInformation
-   :public FileInputOutput,
-    public DcmFileFormat
+   : public DcmFileFormat
 
 {
    private:

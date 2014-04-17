@@ -21,8 +21,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::OpenFile(bool NewFile)
 {
-   if(NewFile)
-    OpenFilePath = dcm.OpenFile("DCM File(*.dcm)");
+     if(NewFile)
+     {
+         OpenFilePath=QFileDialog::getOpenFileName(
+                NULL,
+                QString::fromStdString("Open File"),
+                QDir::currentPath(),
+                "Dcm(*.dcm)");
+
+     }
    if(dcm.initial(OpenFilePath))
     {
 
@@ -38,9 +45,11 @@ void MainWindow::SaveFile()
 {
    if(!OpenFilePath.isEmpty())
    {
-     QString spath = dcm.SaveFile("DCM File(*.dcm);;XML File(*.xml)");
-     //QMessageBox::about(NULL,"",spath);
-     dcm.dcm2Xml(spath/*,OpenFilePath*/);
+     QString spath = QFileDialog::getSaveFileName(
+                 NULL,
+                 QString::fromStdString("Save File"),
+                 QDir::currentPath());
+     dcm.dcm2Xml(spath);
    }
    else
     QMessageBox::warning(
