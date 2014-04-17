@@ -14,12 +14,10 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp\
-        dcminformation.cpp \
-    fileinputoutput.cpp
+        dcminformation.cpp
 
 HEADERS  += mainwindow.h\
-        dcminformation.h \
-    fileinputoutput.h
+        dcminformation.h
 
 #DCMTK Lib setings for mac
 mac*{

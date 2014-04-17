@@ -5,7 +5,7 @@
 #include <QTextDecoder>
 #include <QAbstractItemModel>
 #include "dcminformation.h"
-
+#include <QFileDialog>
 namespace Ui {
 class MainWindow;
 }
