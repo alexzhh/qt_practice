@@ -21,14 +21,14 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    QString OpenFilePath;
+   // QString OpenFilePath;
     QVector<DcmElement*> FilePatientInfo;
     QVector<DcmElement*> NewPatientInfo;
-    DcmInformation dcm;
+    DcmInformation* dcm;
 public:
     void PaintDCM(QPixmap &DCMPix);
 public slots:
-    void OpenFile(bool NewFile=true);
+    void OpenFile();
     void SaveFile();
     void QuitWindows();
     void EditModeChanged(bool);

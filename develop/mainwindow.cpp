@@ -15,27 +15,28 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->btn_Reset,SIGNAL(clicked()),SLOT(ResetPatientInfo()));
     QObject::connect(ui->btn_Save,SIGNAL(clicked()),SLOT(SavePatientInfo2File()));
     emit EditModeChanged(false);
+    dcm = NULL;
     //QMessageBox::about(NULL,"",QString::number(ui->tableWidget->rowCount())+QString::number(ui->tableWidget->columnCount()));
 
 }
 
-void MainWindow::OpenFile(bool NewFile)
+void MainWindow::OpenFile()
 {
-     if(NewFile)
-     {
-         OpenFilePath=QFileDialog::getOpenFileName(
-                NULL,
-                QString::fromStdString("Open File"),
-                QDir::currentPath(),
-                "Dcm(*.dcm)");
 
-     }
-   if(dcm.initial(OpenFilePath))
+    if(dcm==NULL) {
+        QString OpenFilePath=QFileDialog::getOpenFileName(
+                    NULL,
+                    QString::fromStdString("Open File"),
+                    QDir::currentPath(),
+                    "Dcm(*.dcm)");
+         dcm = new DcmInformation(OpenFilePath);
+    }
+
+    if(dcm->loadFromDCM())
     {
-
-      QPixmap qmap = dcm.drawDcmImage(ui->DCMPaint->width(),ui->DCMPaint->height());
+      QPixmap qmap = dcm->drawDcmImage(ui->DCMPaint->width(),ui->DCMPaint->height());
       PaintDCM(qmap);
-      FilePatientInfo = dcm.getAttributes();
+      FilePatientInfo = dcm->getAttributes();
       NewPatientInfo = FilePatientInfo;
       ResetPatientInfo();
     }
@@ -43,13 +44,14 @@ void MainWindow::OpenFile(bool NewFile)
 
 void MainWindow::SaveFile()
 {
-   if(!OpenFilePath.isEmpty())
+   if(dcm!=NULL)
    {
      QString spath = QFileDialog::getSaveFileName(
                  NULL,
                  QString::fromStdString("Save File"),
                  QDir::currentPath());
-     dcm.dcm2Xml(spath);
+     dcm->setOutputFile(spath);
+     dcm->customSaveFile();
    }
    else
     QMessageBox::warning(
@@ -72,7 +74,7 @@ void MainWindow::EditModeChanged(bool EditChecked)
 
     if(EditChecked)   //Edit Checked
     {
-        if(OpenFilePath.isEmpty())
+        if(dcm==NULL)
         {
             QMessageBox::warning(this,"Error","No File Opened!");
             ui->actionEdit->setChecked(false);
@@ -110,14 +112,14 @@ void MainWindow::FillPatientInfo(PatientInfo Type, QString ValueFiled)
 
 void MainWindow::SavePatientInfo2File()
 {
-    DcmDataset* Data=dcm.getDataset();
+    DcmDataset* Data=dcm->getDataset();
     Data->putAndInsertString(DCM_PatientName,ui->Name->text().toStdString().c_str());
     Data->putAndInsertString(DCM_PatientID,ui->ID->text().toStdString().c_str());
     Data->putAndInsertString(DCM_PatientAge,ui->Age->text().toStdString().c_str());
     Data->putAndInsertString(DCM_StudyDate,ui->StudyTime->text().toStdString().c_str());
     Data->putAndInsertString(DCM_ContentDate,ui->ImageTime->text().toStdString().c_str());
-    dcm.saveFile(OpenFilePath.toStdString().c_str());
-    OpenFile(false);
+    dcm->saveFile(dcm->getInuptFile().toStdString().c_str());
+    OpenFile();
 }
 
 void MainWindow::ResetPatientInfo()
@@ -151,5 +153,6 @@ void MainWindow::CheckDataValid()
 
 MainWindow::~MainWindow()
 {
+    delete dcm;
     delete ui;
 }

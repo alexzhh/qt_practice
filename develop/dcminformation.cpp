@@ -1,11 +1,14 @@
 #include "dcminformation.h"
-#ifdef Q_OS_WIN
-  #define roundf(x) ((x-floor(x))>0.5 ? ceil(x) : floor(x))
-#endif
 
-DcmInformation::DcmInformation()
+#define roundf(x) (int(x+0.5))
+
+
+DcmInformation::DcmInformation(QString iPath, QString oPath)
 {
   qimage = NULL;
+  this->inputFilePath = iPath;
+  this->outputFilePath = oPath;
+  this->loaded = false;
 }
 
 
@@ -16,6 +19,21 @@ DcmInformation::~DcmInformation()
 }
 
 
+bool DcmInformation::isLoaded() {
+    return this->loaded;
+}
+
+bool DcmInformation::loadFromDCM()
+{
+   OFCondition oc = this->loadFile(this->inputFilePath.toStdString().c_str());
+
+   if(oc.bad() || !isValid())
+     return false;
+    //errorMsg
+   return true;
+}
+
+/*
 bool DcmInformation::initial(QString OpenPath)
 {
    OFCondition oc = this->loadFile(OpenPath.toStdString().c_str());
@@ -26,12 +44,11 @@ bool DcmInformation::initial(QString OpenPath)
    return true;
 }
 
-
-void DcmInformation::setAttributes(int tag1, int tag2)
+*/
+void DcmInformation::setAttributes(int GroupNum, int ElementNum)
 {
    DcmElement * element = NULL;
-   if(this->getDataset()->findAndGetElement(DcmTagKey(tag1,tag2),element).bad())
-     element = NULL;
+   this->getDataset()->findAndGetElement(DcmTagKey(GroupNum, ElementNum), element);
 
    info.append(element);
 }
@@ -50,7 +67,37 @@ QVector <DcmElement*> DcmInformation::getAttributes()
    return info;
 }
 
+QString DcmInformation::getStringlizeTag(const DcmTag& dcmtag) {
+    return QString(dcmtag.toString().c_str());
+}
 
+bool DcmInformation::endOfDataSet(const DcmTag& dcmtag) {
+    return "(7fe0,0010)" == this->getStringlizeTag(dcmtag);
+}
+
+bool DcmInformation::isValid() {
+    OFCondition oc = this->validateMetaInfo(
+        this->getDataset()->getOriginalXfer());
+    //check the MetaInfo
+    if(oc.bad())
+      return false;
+    //check the dataset
+    DcmElement *dcmElement = NULL;
+    DcmTag dcmtag;
+    int count = 0;
+
+
+    do { //do foreach operation
+      dcmElement = this->getDataset()->getElement(count++);
+      dcmtag = dcmElement->getTag();
+      //here do check data
+      //..................
+     } while(!(this->endOfDataSet(dcmtag)));
+
+     return true;
+}
+
+/*
 bool DcmInformation::fileChecksum()
 {
    OFCondition oc = this->validateMetaInfo(
@@ -63,20 +110,17 @@ bool DcmInformation::fileChecksum()
    DcmTag dcmtag;
    int count = 0;
 
-   while(true)
-   { //do foreach operation
+
+   do { //do foreach operation
      dcmElement = this->getDataset()->getElement(count++);
      dcmtag = dcmElement->getTag();
      //here do check data
      //..................
+    } while(!(this->endOfDataSet(dcmtag)));
 
-     if( "(7fe0,0010)" == QString(dcmtag.toString().c_str()))
-      break;
-   }
-
-   return false;
+    return false;
 }
-
+*/
 
 QPixmap DcmInformation::drawDcmImage(int width, int height)
 {
@@ -185,35 +229,66 @@ uchar DcmInformation::colorPalette(float value)
    else if(color > 255.0)
      return 255.0;
    else
-     return (uchar)(10*((color + 5) / 10));
-     //return (uchar)(roundf(color));
+     return (uchar)(roundf(color));
 }
 
+QString DcmInformation::getInuptFile() {
+    return this->inputFilePath;
+}
 
-void DcmInformation::dcm2Xml(QString fileName/*,QString openfilepath*/)
+void DcmInformation::setOutputFile(QString oPath) {
+    this->outputFilePath = oPath;
+}
+
+void DcmInformation::customSaveFile() {
+    int FileType = this->getSavedFileType();
+    if(!outputFilePath.isEmpty() && !this->getDataset()->isEmpty()) {
+        switch(FileType) {
+            case 0: // DCM
+                this->saveDcmFile();
+                break;
+            case 1: // XML
+                this->saveXmlFile();
+                break;
+        }
+     }
+}
+
+int DcmInformation::getSavedFileType() {
+    if(outputFilePath.toLower().endsWith(".dcm"))
+        return 0;
+    if(outputFilePath.toLower().endsWith(".xml"))
+        return 1;
+}
+
+void DcmInformation::saveDcmFile() {
+
+      this->saveFile(outputFilePath.toStdString().c_str());
+}
+
+void DcmInformation::saveXmlFile() {
+      std::ofstream myfile(outputFilePath.toStdString().c_str());
+      myfile<<"<?xml version=\"1.0\" ?>\n";
+      this->writeXML(myfile);
+      myfile.close();
+}
+
+/*
+void DcmInformation::dcm2Xml()
 {
-   if(!fileName.isEmpty() && !this->getDataset()->isEmpty())
+   if(!outputFilePath.isEmpty() && !this->getDataset()->isEmpty())
    {
-//     if(fileName.endsWith(".dcm"))
-     if(fileName.toLower().endsWith(".dcm"))
-       this->saveFile(fileName.toStdString().c_str());
-//     if(fileName.endsWith(".xml"))
-     if(fileName.toLower().endsWith(".xml"))
+
+     if(outputFilePath.toLower().endsWith(".dcm"))
+       this->saveFile(outputFilePath.toStdString().c_str());
+     if(outputFilePath.toLower().endsWith(".xml"))
      {
-//      QXmlStreamReader xmlReader;
-//       QFile file(fileName.toStdString().c_str());
-//        if(!file.open(QIODevice::ReadWrite))
-//            return false;
-//        QTextStream out(&file);
-//        out<<"<?xml version=\"1.0\" ?>\n";
-//        file.close();
-//       if(!file.open(QIODevice::ReadWrite))
-//         return;
-       std::ofstream myfile(fileName.toStdString().c_str());
+       std::ofstream myfile(outputFilePath.toStdString().c_str());
        myfile<<"<?xml version=\"1.0\" ?>\n";
-//       this->loadFile(openfilepath.toStdString().c_str());
        this->writeXML(myfile);
        myfile.close();
      }
    }
+
 }
+*/

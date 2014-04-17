@@ -22,19 +22,37 @@ class DcmInformation
 {
    private:
      QVector <DcmElement*> info;
+
      void setAttributes(int, int);
      QImage *qimage;
+
+     QString inputFilePath; // Loading file path
+     QString outputFilePath; // saving file path
+     bool loaded;
+
+
    public:
-     DcmInformation();
+     DcmInformation(QString iPath, QString oPath="");
      ~DcmInformation();
-     bool initial(QString);
-     bool fileChecksum(); //file check
-     QVector <DcmElement*> getAttributes(); //return tags
+     //bool initial(QString);
+     bool loadFromDCM(); // load DCM data from *.dcm (inputFilePath)
+     QString getStringlizeTag(const DcmTag& dcmtag);
+     // bool fileChecksum(); // file check
+     bool endOfDataSet(const DcmTag& dcmtag);
+     bool isValid(); // check file format
+     void customSaveFile();
+     int getSavedFileType();
+     void saveDcmFile();
+     void saveXmlFile();
+     QVector <DcmElement*> getAttributes(); // return tags
      template <typename T>
-     void MonochromeColorTrans(const T * pixelData);
+     void MonochromeColorTrans(const T * pixelData); // set pixel data
      uchar colorPalette(float);
-     QPixmap drawDcmImage(int width,int height); //return paint pixel object
-     void dcm2Xml(QString/*,QString*/);
+     QPixmap drawDcmImage(int width, int height); //return paint pixel object
+     void setOutputFile(QString oPath);
+     QString getInuptFile();
+     bool isLoaded();
+     //void dcm2Xml(QString/*,QString*/);
 };
 
 #endif
