@@ -38,7 +38,7 @@ class DcmInformation
      ~DcmInformation();
 
      bool loadFromDCM(); // load DCM data from *.dcm (inputFilePath)
-     QString getStringlizeTag(const DcmTag& dcmtag);
+     QString getStringlizeTag(const DcmTag& dcmtag); // return (GroupNum, ElementNum) as string
      bool endOfDataSet(const DcmTag& dcmtag);
      bool isValid(); // check file format
      void customSaveFile();
