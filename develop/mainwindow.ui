@@ -56,7 +56,7 @@
       </rect>
      </property>
     </widget>
-    <widget class="QLineEdit" name="StudyTime">
+    <widget class="QLineEdit" name="StudyData">
      <property name="geometry">
       <rect>
        <x>80</x>
@@ -66,7 +66,7 @@
       </rect>
      </property>
     </widget>
-    <widget class="QLineEdit" name="ImageTime">
+    <widget class="QLineEdit" name="ContentData">
      <property name="geometry">
       <rect>
        <x>80</x>
@@ -180,7 +180,7 @@
       <string/>
      </property>
     </widget>
-    <widget class="QLabel" name="StudyTimeException">
+    <widget class="QLabel" name="StudyDataException">
      <property name="geometry">
       <rect>
        <x>200</x>
@@ -193,7 +193,7 @@
       <string/>
      </property>
     </widget>
-    <widget class="QLabel" name="ImageTimeException">
+    <widget class="QLabel" name="ContentDataException">
      <property name="geometry">
       <rect>
        <x>200</x>

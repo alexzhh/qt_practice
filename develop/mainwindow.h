@@ -10,6 +10,9 @@ namespace Ui {
 class MainWindow;
 }
 
+#define setflag(data,pos) (data=(data | 1<<pos))
+#define clearflag(data,pos) (data=(data & ~(1<<pos)))
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -21,21 +24,22 @@ public:
 
 private:
     Ui::MainWindow *ui;
-   // QString OpenFilePath;
     QVector<DcmElement*> FilePatientInfo;
-    QVector<DcmElement*> NewPatientInfo;
     DcmInformation* dcm;
+    unsigned long InputStatu;
 public:
     void PaintDCM(QPixmap &DCMPix);
 public slots:
-    void OpenFile();
+    QString SelectFile();
+    void InitDCMObject(DcmInformation* dcmObject);
+    bool LoadFile();
     void SaveFile();
     void QuitWindows();
     void EditModeChanged(bool);
     void FillPatientInfo(PatientInfo Type,QString ValueFiled);
     void SavePatientInfo2File();
     void ResetPatientInfo();
-    void CheckDataValid();
+    void UpdataErrorInfo();
+    OFCondition CheckDataValid(PatientInfo VRType,const QString Value);
 };
-
 #endif // MAINWINDOW_H
