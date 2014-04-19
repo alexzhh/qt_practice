@@ -63,8 +63,12 @@ bool MainWindow::LoadFile()
     bool result = true;
     if(dcm->loadFromDCM())
     {
-      QPixmap qmap = dcm->drawDcmImage(ui->DCMPaint->width(),ui->DCMPaint->height());
-      PaintDCM(qmap);
+      ImageView drawImage;
+      if(drawImage.loadDcmFile(dcm->getInputFile()))
+      {
+        QPixmap qmap = drawImage.drawDcmImage(ui->DCMPaint->width(),ui->DCMPaint->height());
+        PaintDCM(qmap);
+      }
       FilePatientInfo = dcm->getAttributes();
       ResetPatientInfo();
     }
@@ -153,7 +157,7 @@ void MainWindow::SavePatientInfo2File()
     Data->putAndInsertString(DCM_PatientAge,ui->Age->text().toStdString().c_str());
     Data->putAndInsertString(DCM_StudyDate,ui->StudyData->text().toStdString().c_str());
     Data->putAndInsertString(DCM_ContentDate,ui->ContentData->text().toStdString().c_str());
-    dcm->saveFile(dcm->getInuptFile().toStdString().c_str());
+    dcm->saveFile(dcm->getInputFile().toStdString().c_str());
     LoadFile();
 }
 
@@ -210,31 +214,31 @@ OFCondition MainWindow::CheckDataValid(PatientInfo VRType,const QString Value)
     OFCondition result=EC_Normal;
     switch(VRType)
     {
-    case PatientInfo::PatientID:
+    case PatientID:
         result=DcmLongString::checkStringValue(Value.toStdString().c_str());
         (result==EC_Normal)?
                     (clearflag(InputStatu,PatientID)):
                     (setflag(InputStatu,PatientID));
         break;
-    case PatientInfo::PatientName:
+    case PatientName:
         result=DcmPersonName::checkStringValue(Value.toStdString().c_str());
         (result==EC_Normal)?
                     (clearflag(InputStatu,PatientName)):
                     (setflag(InputStatu,PatientName));
         break;
-    case PatientInfo::PatientAge:
+    case PatientAge:
         result=DcmAgeString::checkStringValue(Value.toStdString().c_str());
         (result==EC_Normal)?
                     (clearflag(InputStatu,PatientAge)):
                     (setflag(InputStatu,PatientAge));
         break;
-    case PatientInfo::StudyData:
+    case StudyData:
         result=DcmDate::checkStringValue(Value.toStdString().c_str());
         (result==EC_Normal)?
                     (clearflag(InputStatu,StudyData)):
                     (setflag(InputStatu,StudyData));
         break;
-    case PatientInfo::ContentData:
+    case ContentData:
         result=DcmDate::checkStringValue(Value.toStdString().c_str());
         (result==EC_Normal)?
                     (clearflag(InputStatu,ContentData)):
