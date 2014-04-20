@@ -22,7 +22,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->Age,SIGNAL(editingFinished()),SLOT(UpdataErrorInfo()));
     QObject::connect(ui->StudyData,SIGNAL(editingFinished()),SLOT(UpdataErrorInfo()));
     QObject::connect(ui->ContentData,SIGNAL(editingFinished()),SLOT(UpdataErrorInfo()));
-
 }
 
 void MainWindow::InitDCMObject(DcmInformation* dcmObject)
@@ -64,12 +63,8 @@ bool MainWindow::LoadFile()
     bool result = true;
     if(dcm->loadFromDCM())
     {
-      ImageView drawImage;
-      if(drawImage.loadDcmFile(dcm->getInputFile()))
-      {
-        QPixmap qmap = drawImage.drawDcmImage(ui->DCMPaint->width(),ui->DCMPaint->height());
-        PaintDCM(qmap);
-      }
+      QPixmap qmap = dcm->drawDcmImage(ui->DCMPaint->width(),ui->DCMPaint->height());
+      PaintDCM(qmap);
       FilePatientInfo = dcm->getAttributes();
       ResetPatientInfo();
     }
@@ -152,12 +147,11 @@ void MainWindow::FillPatientInfo(PatientInfo Type, QString ValueFiled)
 
 void MainWindow::SavePatientInfo2File()
 {
-    DcmDataset* Data=dcm->getDataset();
-    Data->putAndInsertString(DCM_PatientName,ui->Name->text().toStdString().c_str());
-    Data->putAndInsertString(DCM_PatientID,ui->ID->text().toStdString().c_str());
-    Data->putAndInsertString(DCM_PatientAge,ui->Age->text().toStdString().c_str());
-    Data->putAndInsertString(DCM_StudyDate,ui->StudyData->text().toStdString().c_str());
-    Data->putAndInsertString(DCM_ContentDate,ui->ContentData->text().toStdString().c_str());
+    dcm->putAndInsertString(0x0010,0x0010,ui->Name->text());
+    dcm->putAndInsertString(0x0010,0x0020,ui->ID->text());
+    dcm->putAndInsertString(0x0010,0x1010,ui->Age->text());
+    dcm->putAndInsertString(0x0008,0x0020,ui->StudyData->text());
+    dcm->putAndInsertString(0x0008,0x0023,ui->ContentData->text());
     dcm->saveFile(dcm->getInputFile().toStdString().c_str());
     LoadFile();
 }
@@ -190,19 +184,19 @@ void MainWindow::PaintDCM(QPixmap &DCMPix)
 void MainWindow::UpdataErrorInfo()
 {
     ui->IDException->setText(
-                (EC_Normal==CheckDataValid(PatientID,ui->ID->text()))?
+                (true == CheckDataValid(PatientID,ui->ID->text()))?
                     "":"Error");
     ui->NameException->setText(
-                (EC_Normal==CheckDataValid(PatientName,ui->Name->text()))?
+                (true == CheckDataValid(PatientName,ui->Name->text()))?
                     "":"Error");
     ui->AgeException->setText(
-                (EC_Normal==CheckDataValid(PatientAge,ui->Age->text()))?
+                (true == CheckDataValid(PatientAge,ui->Age->text()))?
                     "":"Error");
     ui->StudyDataException->setText(
-                (EC_Normal==CheckDataValid(StudyData,ui->StudyData->text()))?
+                (true == CheckDataValid(StudyData,ui->StudyData->text()))?
                     "":"Error");
     ui->ContentDataException->setText(
-                (EC_Normal==CheckDataValid(ContentData,ui->ContentData->text()))?
+                (true == CheckDataValid(ContentData,ui->ContentData->text()))?
                     "":"Error");
     if(InputStatu != 0)
         ui->btn_Save->setEnabled(false);
@@ -210,38 +204,38 @@ void MainWindow::UpdataErrorInfo()
         ui->btn_Save->setEnabled(true);
 }
 
-OFCondition MainWindow::CheckDataValid(PatientInfo VRType,const QString Value)
+bool MainWindow::CheckDataValid(PatientInfo VRType,const QString Value)
 {
-    OFCondition result=EC_Normal;
+    bool result = true;
     switch(VRType)
     {
     case PatientID:
-        result=DcmLongString::checkStringValue(Value.toStdString().c_str());
-        (result==EC_Normal)?
+        result = dcm->checkEachTag(10,Value.toStdString().c_str());
+        (result == true)?
                     (clearflag(InputStatu,PatientID)):
                     (setflag(InputStatu,PatientID));
         break;
     case PatientName:
-        result=DcmPersonName::checkStringValue(Value.toStdString().c_str());
-        (result==EC_Normal)?
+        result = dcm->checkEachTag(15,Value.toStdString().c_str());
+        (result == true)?
                     (clearflag(InputStatu,PatientName)):
                     (setflag(InputStatu,PatientName));
         break;
     case PatientAge:
-        result=DcmAgeString::checkStringValue(Value.toStdString().c_str());
-        (result==EC_Normal)?
+        result = dcm->checkEachTag(1,Value.toStdString().c_str());
+        (result == true)?
                     (clearflag(InputStatu,PatientAge)):
                     (setflag(InputStatu,PatientAge));
         break;
     case StudyData:
-        result=DcmDate::checkStringValue(Value.toStdString().c_str());
-        (result==EC_Normal)?
+        result = dcm->checkEachTag(4,Value.toStdString().c_str());
+        (result == true)?
                     (clearflag(InputStatu,StudyData)):
                     (setflag(InputStatu,StudyData));
         break;
     case ContentData:
-        result=DcmDate::checkStringValue(Value.toStdString().c_str());
-        (result==EC_Normal)?
+        result = dcm->checkEachTag(4,Value.toStdString().c_str());
+        (result == true)?
                     (clearflag(InputStatu,ContentData)):
                     (setflag(InputStatu,ContentData));
         break;

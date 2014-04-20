@@ -5,6 +5,7 @@
 #include <dcmtk/dcmdata/dctk.h>
 #include <QVector>
 #include <QMessageBox>
+#include "imageview.h"
 
 //#define PatientID         0x0020
 //#define PatientName       0x0010
@@ -45,6 +46,11 @@ class DcmInformation
      void setOutputFile(const QString &oPath); //set Output File path (OutputFilePath)
      QString getInputFile(); // get Input File path (inputFilePath)
      QString getOutputFile();// get Output File path (OutputFilePath)
+     QPixmap drawDcmImage(int width,int height); //draw image return QPixmap
+     void putAndInsertString(Uint16 group, Uint16 element, const QString& value);
+     //Change the value replaced the original value of tag
+     bool checkEachTag(const int & dcmevr,const char * value);
+     //Check the validity of each tag
 };
 
 #endif

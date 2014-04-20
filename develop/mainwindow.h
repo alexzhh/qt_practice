@@ -5,7 +5,6 @@
 #include <QTextDecoder>
 #include <QAbstractItemModel>
 #include "dcminformation.h"
-#include "imageview.h"
 #include <QFileDialog>
 namespace Ui {
 class MainWindow;
@@ -41,6 +40,6 @@ public slots:
     void SavePatientInfo2File();
     void ResetPatientInfo();
     void UpdataErrorInfo();
-    OFCondition CheckDataValid(PatientInfo VRType,const QString Value);
+    bool CheckDataValid(PatientInfo VRType,const QString Value);
 };
 #endif // MAINWINDOW_H
