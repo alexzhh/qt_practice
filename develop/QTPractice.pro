@@ -23,16 +23,13 @@ HEADERS  += mainwindow.h\
 
 #DCMTK Lib setings for mac
 mac*{
-INCLUDEPATH += ../../dcmtk360/include
-LIBS +=  "D:\Qt\DCMTK\lib\dcmdata.lib" \
-         "D:\Qt\DCMTK\lib\dcmimage.lib" \
-         "D:\Qt\DCMTK\lib\dcmimgle.lib" \
-         "D:\Qt\DCMTK\lib\ofstd.lib" \
-         "D:\Qt\DCMTK\lib\oflog.lib" \
-        "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\AdvAPI32.Lib" \
-        "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\WS2_32.Lib" \
-        "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\netapi32.lib"
+    DCMTK_HOME = /Users/phoenix/dcmtkLib
+    INCLUDEPATH += $${DCMTK_HOME}/include
+    LIB_PATH = $${DCMTK_HOME}/lib
+    LIBS +=  -L$${LIB_PATH}
+    LIBS +=  -ldcmdata -ldcmimage -ldcmimgle -lofstd -loflog -lz
 }
+
 #DCMTK Lib setings for Linux
 unix:!macx{
 INCLUDEPATH += ../dcmtk360/include
