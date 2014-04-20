@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->Age,SIGNAL(editingFinished()),SLOT(UpdataErrorInfo()));
     QObject::connect(ui->StudyData,SIGNAL(editingFinished()),SLOT(UpdataErrorInfo()));
     QObject::connect(ui->ContentData,SIGNAL(editingFinished()),SLOT(UpdataErrorInfo()));
+
 }
 
 void MainWindow::InitDCMObject(DcmInformation* dcmObject)
@@ -210,31 +211,31 @@ OFCondition MainWindow::CheckDataValid(PatientInfo VRType,const QString Value)
     OFCondition result=EC_Normal;
     switch(VRType)
     {
-    case PatientInfo::PatientID:
+    case PatientID:
         result=DcmLongString::checkStringValue(Value.toStdString().c_str());
         (result==EC_Normal)?
                     (clearflag(InputStatu,PatientID)):
                     (setflag(InputStatu,PatientID));
         break;
-    case PatientInfo::PatientName:
+    case PatientName:
         result=DcmPersonName::checkStringValue(Value.toStdString().c_str());
         (result==EC_Normal)?
                     (clearflag(InputStatu,PatientName)):
                     (setflag(InputStatu,PatientName));
         break;
-    case PatientInfo::PatientAge:
+    case PatientAge:
         result=DcmAgeString::checkStringValue(Value.toStdString().c_str());
         (result==EC_Normal)?
                     (clearflag(InputStatu,PatientAge)):
                     (setflag(InputStatu,PatientAge));
         break;
-    case PatientInfo::StudyData:
+    case StudyData:
         result=DcmDate::checkStringValue(Value.toStdString().c_str());
         (result==EC_Normal)?
                     (clearflag(InputStatu,StudyData)):
                     (setflag(InputStatu,StudyData));
         break;
-    case PatientInfo::ContentData:
+    case ContentData:
         result=DcmDate::checkStringValue(Value.toStdString().c_str());
         (result==EC_Normal)?
                     (clearflag(InputStatu,ContentData)):
