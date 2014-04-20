@@ -14,20 +14,25 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp\
-        dcminformation.cpp
+        dcminformation.cpp \
+        imageview.cpp
 
 HEADERS  += mainwindow.h\
-        dcminformation.h
+        dcminformation.h \
+        imageview.h
 
 #DCMTK Lib setings for mac
 mac*{
-    DCMTK_HOME = /Users/phoenix/dcmtkLib
-    INCLUDEPATH += $${DCMTK_HOME}/include
-    LIB_PATH = $${DCMTK_HOME}/lib
-    LIBS +=  -L$${LIB_PATH}
-    LIBS +=  -ldcmdata -ldcmimage -ldcmimgle -lofstd -loflog -lz
+INCLUDEPATH += ../../dcmtk360/include
+LIBS +=  "D:\Qt\DCMTK\lib\dcmdata.lib" \
+         "D:\Qt\DCMTK\lib\dcmimage.lib" \
+         "D:\Qt\DCMTK\lib\dcmimgle.lib" \
+         "D:\Qt\DCMTK\lib\ofstd.lib" \
+         "D:\Qt\DCMTK\lib\oflog.lib" \
+        "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\AdvAPI32.Lib" \
+        "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\WS2_32.Lib" \
+        "C:\Program Files\Microsoft SDKs\Windows\v7.1\Lib\x64\netapi32.lib"
 }
-
 #DCMTK Lib setings for Linux
 unix:!macx{
 INCLUDEPATH += ../dcmtk360/include

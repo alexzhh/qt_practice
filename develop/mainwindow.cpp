@@ -64,8 +64,12 @@ bool MainWindow::LoadFile()
     bool result = true;
     if(dcm->loadFromDCM())
     {
-      QPixmap qmap = dcm->drawDcmImage(ui->DCMPaint->width(),ui->DCMPaint->height());
-      PaintDCM(qmap);
+      ImageView drawImage;
+      if(drawImage.loadDcmFile(dcm->getInputFile()))
+      {
+        QPixmap qmap = drawImage.drawDcmImage(ui->DCMPaint->width(),ui->DCMPaint->height());
+        PaintDCM(qmap);
+      }
       FilePatientInfo = dcm->getAttributes();
       ResetPatientInfo();
     }
@@ -154,7 +158,7 @@ void MainWindow::SavePatientInfo2File()
     Data->putAndInsertString(DCM_PatientAge,ui->Age->text().toStdString().c_str());
     Data->putAndInsertString(DCM_StudyDate,ui->StudyData->text().toStdString().c_str());
     Data->putAndInsertString(DCM_ContentDate,ui->ContentData->text().toStdString().c_str());
-    dcm->saveFile(dcm->getInuptFile().toStdString().c_str());
+    dcm->saveFile(dcm->getInputFile().toStdString().c_str());
     LoadFile();
 }
 
