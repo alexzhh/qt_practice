@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->Age,SIGNAL(editingFinished()),SLOT(UpdataErrorInfo()));
     QObject::connect(ui->StudyData,SIGNAL(editingFinished()),SLOT(UpdataErrorInfo()));
     QObject::connect(ui->ContentData,SIGNAL(editingFinished()),SLOT(UpdataErrorInfo()));
+    //QMessageBox::about(this,"",QString::number(ReadConfig().size()));
 }
 
 void MainWindow::InitDCMObject(DcmInformation* dcmObject)
@@ -31,6 +32,74 @@ void MainWindow::InitDCMObject(DcmInformation* dcmObject)
         delete dcmObject;
         dcmObject = NULL;
     }
+}
+
+DcmInformation* MainWindow::getDCMObject()
+{
+    return this->dcm;
+}
+
+QVector<Elementinfo> MainWindow::ReadConfig()
+{
+    QFile xmlfile;
+    QDomDocument doc;
+    QString errmsg="";
+    xmlfile.setFileName("config.xml");
+    if(xmlfile.exists())
+    {
+        if(!xmlfile.open(QFile::ReadOnly) ||
+                !doc.setContent(&xmlfile,&errmsg))
+        {
+            //"Read Config Failed!"
+            QMessageBox::warning(this,"File","Error:"+errmsg);
+            xmlfile.close();
+            return Config;
+        }
+        QDomNodeList nodelist=doc.elementsByTagName("Element");
+        for(int i=0;i<nodelist.size();i++)
+        {
+            Elementinfo ele;
+            ele.EVR = nodelist.at(i).toElement().text().toInt();
+            QDomNamedNodeMap attrib=nodelist.at(i).attributes();
+            bool ValidConfigItem=true;
+            for(int j=0;j<attrib.size();j++)
+            {
+                bool ok=true;
+                if("GTag"==attrib.item(j).nodeName())
+                {
+                    QString value=attrib.item(j).nodeValue();
+                    ele.GTag=value.toUShort(&ok,16);
+                    if(!value.toLower().startsWith("0x") ||
+                            !(value.length()==6) ||
+                            !ok)
+                    {
+                        ValidConfigItem=false;
+                        break;
+                    }
+                }
+                else if("ETag"==attrib.item(j).nodeName())
+                {
+                    QString value=attrib.item(j).nodeValue();
+                    ele.ETag=attrib.item(j).nodeValue().toUShort(&ok,16);
+                    if(!value.toLower().startsWith("0x") ||
+                            !(value.length()==6) ||
+                            !ok)
+                    {
+                        ValidConfigItem=false;
+                        break;
+                    }
+                }
+                else if("TagName"==attrib.item(j).nodeName())
+                    ele.TagName=attrib.item(j).nodeValue();
+                else if("VRDescription"==attrib.item(j).nodeName())
+                    ele.VRDescription=attrib.item(j).nodeValue();
+            }
+            if(ValidConfigItem)
+                Config.push_back(ele);
+        }
+    }
+    xmlfile.close();
+    return Config;
 }
 
 QString MainWindow::SelectFile()
