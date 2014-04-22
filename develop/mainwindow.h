@@ -2,16 +2,30 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QTextDecoder>
-#include <QAbstractItemModel>
-#include "dcminformation.h"
+#include <QtXml/QDomDocument>
+#include <QtXml/QDomNode>
+#include <QtXml/QDomNodeList>
+#include <QFile>
 #include <QFileDialog>
+#include <QVector>
+#include "dcminformation.h"
+
 namespace Ui {
 class MainWindow;
 }
 
 #define setflag(data,pos) (data=(data | 1<<pos))
 #define clearflag(data,pos) (data=(data & ~(1<<pos)))
+
+//A struct Save single Config information
+typedef struct Elementinfo
+{
+    unsigned short GTag;
+    unsigned short ETag;
+    QString TagName;
+    QString VRDescription;
+    int     EVR;
+}Elementinfo;
 
 class MainWindow : public QMainWindow
 {
@@ -24,18 +38,26 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    //Save some Patient Information from file
+    //patient name,patient age,patient id,study date,content date etc.
     QVector<DcmElement*> FilePatientInfo;
     DcmInformation* dcm;
+    //save config information from .xml
+    QVector<Elementinfo> Config;
     //all user input flag,0 if ok,nonzero otherwise
     unsigned long InputStatu;
 public:
+    //get dcminformation function for unite test
+    DcmInformation* getDCMObject();
     //Paint DCM image
     void PaintDCM(QPixmap &DCMPix);
+    //read config from .xml file
+    QVector<Elementinfo> ReadConfig();
+    //init dcmobject(free space)
+    void InitDCMObject(DcmInformation* dcmObject);
 public slots:
     //Choose a file from local disk to open,return Filepath selected
     QString SelectFile();
-    //init dcmobject(free space)
-    void InitDCMObject(DcmInformation* dcmObject);
     //pass Filepath to construct dcm object
     bool LoadFile();
     //interface ,Save as another file format
