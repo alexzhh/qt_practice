@@ -51,3 +51,7 @@ INCLUDEPATH += "D:/Qt/DCMTK/include"
 
 FORMS    += \
     mainwindow.ui
+
+#create Subprojects
+TEMPLATE =subdirs
+SUBDIRS =CodeTest
