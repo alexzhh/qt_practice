@@ -9,6 +9,7 @@
 #include <QFileDialog>
 #include <QVector>
 #include "dcminformation.h"
+#include "ui_mainwindow.h"
 
 namespace Ui {
 class MainWindow;
