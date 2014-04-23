@@ -24,6 +24,10 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->ContentData,SIGNAL(editingFinished()),SLOT(UpdataErrorInfo()));
     //QMessageBox::about(this,"",QString::number(ReadConfig().size()));
 }
+Ui::MainWindow * MainWindow::getui()
+{
+    return this->ui;
+}
 
 void MainWindow::InitDCMObject(DcmInformation* dcmObject)
 {
