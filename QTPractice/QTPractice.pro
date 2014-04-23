@@ -53,5 +53,5 @@ FORMS    += \
     mainwindow.ui
 
 #create Subprojects
-TEMPLATE =subdirs
-SUBDIRS =CodeTest
+#TEMPLATE =subdirs
+#SUBDIRS =CodeTest
