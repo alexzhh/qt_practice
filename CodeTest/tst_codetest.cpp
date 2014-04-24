@@ -73,10 +73,10 @@ void CodeTest::cleanupTestCase()
 
 void CodeTest::testStructure()
 {
-    QString testiPath="..//CodeTest//CT.dcm";
+    QString testiPath="..//..//CodeTest//CT.dcm";
     QString testoPath="";
     testDcm=new DcmInformation(testiPath,testoPath);
-    QCOMPARE(testDcm->getInputFile(),QString("..//CodeTest//CT.dcm"));
+    QCOMPARE(testDcm->getInputFile(),QString("..//..//CodeTest//CT.dcm"));
     QCOMPARE(testDcm->getOutputFile(),QString(""));
 
 
@@ -139,9 +139,9 @@ void CodeTest::testgetSavedFileType()
 
 void CodeTest::testsetOutputFile()
 {
-    QString testString="..//CodeTest//1.dcm";
+    QString testString="..//..//CodeTest//1.dcm";
     testDcm->setOutputFile(testString);
-    QCOMPARE(testDcm->getOutputFile(),QString("..//CodeTest//1.dcm"));
+    QCOMPARE(testDcm->getOutputFile(),QString("..//..//CodeTest//1.dcm"));
 
 
 }
@@ -195,14 +195,14 @@ void CodeTest::testgetAttributes_data()
 void CodeTest::testgetInputFile()
 {
 
-   QCOMPARE(testDcm->getInputFile(),QString("..//CodeTest//CT.dcm"));
+   QCOMPARE(testDcm->getInputFile(),QString("..//..//CodeTest//CT.dcm"));
 
 }
 
 void CodeTest::testgetOutputFile()
 {
 
-   QCOMPARE(testDcm->getOutputFile(),QString("..//CodeTest//1.dcm"));
+   QCOMPARE(testDcm->getOutputFile(),QString("..//..//CodeTest//1.dcm"));
 
 }
 
