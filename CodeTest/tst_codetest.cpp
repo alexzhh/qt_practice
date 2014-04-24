@@ -1,6 +1,6 @@
 #include <QString>
 #include <QtTest>
-#include "dcminformation.h"
+#include "../QTPractice/dcminformation.h"
 
 class CodeTest : public QObject
 {
@@ -73,10 +73,10 @@ void CodeTest::cleanupTestCase()
 
 void CodeTest::testStructure()
 {
-    QString testiPath="e://CT.dcm";
+    QString testiPath="..//CodeTest//CT.dcm";
     QString testoPath="";
     testDcm=new DcmInformation(testiPath,testoPath);
-    QCOMPARE(testDcm->getInputFile(),QString("e://CT.dcm"));
+    QCOMPARE(testDcm->getInputFile(),QString("..//CodeTest//CT.dcm"));
     QCOMPARE(testDcm->getOutputFile(),QString(""));
 
 
@@ -139,9 +139,9 @@ void CodeTest::testgetSavedFileType()
 
 void CodeTest::testsetOutputFile()
 {
-    QString testString="e://1.dcm";
+    QString testString="..//CodeTest//1.dcm";
     testDcm->setOutputFile(testString);
-    QCOMPARE(testDcm->getOutputFile(),QString("e://1.dcm"));
+    QCOMPARE(testDcm->getOutputFile(),QString("..//CodeTest//1.dcm"));
 
 
 }
@@ -195,14 +195,14 @@ void CodeTest::testgetAttributes_data()
 void CodeTest::testgetInputFile()
 {
 
-   QCOMPARE(testDcm->getInputFile(),QString("e://CT.dcm"));
+   QCOMPARE(testDcm->getInputFile(),QString("..//CodeTest//CT.dcm"));
 
 }
 
 void CodeTest::testgetOutputFile()
 {
 
-   QCOMPARE(testDcm->getOutputFile(),QString("e://1.dcm"));
+   QCOMPARE(testDcm->getOutputFile(),QString("..//CodeTest//1.dcm"));
 
 }
 
@@ -245,10 +245,10 @@ void CodeTest::testcheckEachTag()
 void CodeTest::testStructureFalse()
 {
     delete testDcm;
-    QString testiPath="testvalue";
+    QString testiPath="TestValue";
     QString testoPath="";
     testDcm=new DcmInformation(testiPath,testoPath);
-    QCOMPARE(testDcm->getInputFile(),QString("e://CT.dcm"));
+    QCOMPARE(testDcm->getInputFile(),QString("TestValue"));
     QCOMPARE(testDcm->getOutputFile(),QString(""));
 
 }
@@ -256,7 +256,7 @@ void CodeTest::testStructureFalse()
 void CodeTest::testloadFromDCMFalse()
 {
 
-   QCOMPARE(testDcm->loadFromDCM(),true);
+   QCOMPARE(testDcm->loadFromDCM(),false);
 
 
 
@@ -272,7 +272,7 @@ void CodeTest::testElementIsExist()
           testboolvalue=false;
 
       }
-      QCOMPARE(testboolvalue,true);
+      QCOMPARE(testboolvalue,false);
 
 }
 
@@ -292,7 +292,7 @@ void CodeTest::testsetOutputFileFalse()
 {
     QString testString="TestValue";
     testDcm->setOutputFile(testString);
-    QCOMPARE(testDcm->getOutputFile(),QString("e://1.dcm"));
+    QCOMPARE(testDcm->getOutputFile(),QString("TestValue"));
 
 
 }
@@ -301,14 +301,14 @@ void CodeTest::testsetOutputFileFalse()
 void CodeTest::testgetInputFileFalse()
 {
 
-   QCOMPARE(testDcm->getInputFile(),QString("e://CT.dcm"));
+   QCOMPARE(testDcm->getInputFile(),QString("TestValue"));
 
 }
 
 void CodeTest::testgetOutputFileFalse()
 {
 
-   QCOMPARE(testDcm->getOutputFile(),QString("e://1.dcm"));
+   QCOMPARE(testDcm->getOutputFile(),QString("TestValue"));
 
 }
 
@@ -319,7 +319,7 @@ void CodeTest::testcheckEachTagFalse()
     const int & testvalue=testintvalue;
     testintvalue=26;
     bool testboolvalue=testDcm->checkEachTag(testvalue,NULL);
-    QCOMPARE(testboolvalue,true);
+    QCOMPARE(testboolvalue,false);
 
 
 }

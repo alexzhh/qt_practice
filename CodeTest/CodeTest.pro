@@ -16,13 +16,16 @@ TEMPLATE = app
 
 
 SOURCES += tst_codetest.cpp \
-    dcminformation.cpp \
-    imageview.cpp
+           ../QTPractice/dcminformation.cpp\
+           ../QTPractice/imageview.cpp\
+
+
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 HEADERS += \
-    dcminformation.h \
-    imageview.h
+           ../QTPractice/dcminformation.h\
+           ../QTPractice/imageview.h\
+
 
 
 #DCMTK Lib
