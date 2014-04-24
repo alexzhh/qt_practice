@@ -16,6 +16,11 @@ private:
 public:
     ImageView();
     ~ImageView();
+
+    QImage* getImage();//return image object
+    DicomImage* getDicomImage();//return dicomImage object
+    int getImageWidth();//return image width
+    int getImageHeight();//return image height
     bool loadDcmFile(QString oPath);
     // load DCM data from *.dcm
     QPixmap drawDcmImage(int width, int height);

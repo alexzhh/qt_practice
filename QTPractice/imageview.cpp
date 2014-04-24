@@ -30,6 +30,30 @@ bool ImageView::loadDcmFile(QString oPath)
 }
 
 
+QImage* ImageView::getImage()
+{
+   return this->qimage;
+}
+
+
+DicomImage* ImageView::getDicomImage()
+{
+   return this->dicomImage;
+}
+
+
+int ImageView::getImageHeight()
+{
+   return this->imageHeight;
+}
+
+
+int ImageView::getImageWidth()
+{
+   return this->imageWidth;
+}
+
+
 QPixmap ImageView::drawDcmImage(int width, int height)
 {
    if(dicomImage->isMonochrome())
