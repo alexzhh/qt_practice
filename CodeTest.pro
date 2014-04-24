@@ -1,4 +1,5 @@
 TEMPLATE = subdirs
 
 SUBDIRS +=  CodeTest \
-    QTPractice
+    QTPractice\
+    ImageTest
