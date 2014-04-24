@@ -1,6 +1,6 @@
 #include <QString>
 #include <QtTest>
-#include "../../QTPractice/imageview.h"
+#include "../QTPractice/imageview.h"
 Q_DECLARE_METATYPE(QImage::Format)
 Q_DECLARE_METATYPE(EP_Representation)
 
@@ -201,7 +201,7 @@ void QTtest::testStructure()
 
 void QTtest::testLoadDcmFile()
 {
-   QString cPath = "../../CodeTest/CT.dcm";
+   QString cPath = "../CodeTest/CT.dcm";
    QCOMPARE(imageview->loadDcmFile(cPath),true);
    QVERIFY(imageview->getDicomImage() != NULL);
    QVERIFY(imageview->getImage() == NULL);
@@ -211,7 +211,7 @@ void QTtest::testLoadDcmFile()
 
 void QTtest::testLoadDcmFileNeg()
 {
-//   QString wPath = "../../CodeTest/1.dcm";
+//   QString wPath = "../CodeTest/1.dcm";
 //   QCOMPARE(imageview->loadDcmFile(wPath),false);
 }
 
