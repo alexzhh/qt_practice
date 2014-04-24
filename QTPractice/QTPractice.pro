@@ -21,6 +21,8 @@ HEADERS  += mainwindow.h\
         dcminformation.h \
         imageview.h
 
+UI_DIR += $$PWD
+
 #DCMTK Lib setings for mac
 mac*{
     DCMTK_HOME = /Users/phoenix/dcmtkLib
