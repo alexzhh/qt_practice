@@ -9,7 +9,6 @@
 #include <QFileDialog>
 #include <QVector>
 #include "dcminformation.h"
-#include "ui_mainwindow.h"
 
 namespace Ui {
 class MainWindow;
@@ -48,6 +47,8 @@ private:
     //all user input flag,0 if ok,nonzero otherwise
     unsigned long InputStatu;
 public:
+    //get InputStatu
+    unsigned long GetInputState();
     //get ui for unit test
     Ui::MainWindow * getui();
     //get dcminformation function for unite test

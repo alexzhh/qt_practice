@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "ui_mainwindow.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -24,6 +25,12 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->ContentData,SIGNAL(editingFinished()),SLOT(UpdataErrorInfo()));
     //QMessageBox::about(this,"",QString::number(ReadConfig().size()));
 }
+
+unsigned long MainWindow::GetInputState()
+{
+    return this->InputStatu;
+}
+
 Ui::MainWindow * MainWindow::getui()
 {
     return this->ui;
