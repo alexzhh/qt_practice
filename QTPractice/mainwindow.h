@@ -27,12 +27,20 @@ typedef struct Elementinfo
     int     EVR;
 }Elementinfo;
 
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    enum PatientInfo{PatientID=0,PatientName,PatientAge,StudyData,ContentData};
+    enum PatientInfo
+    {
+        PatientID=0,
+        PatientName,
+        PatientAge,
+        StudyData,
+        ContentData
+    };
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
@@ -53,6 +61,8 @@ public:
     Ui::MainWindow * getui();
     //get dcminformation function for unite test
     DcmInformation* getDCMObject();
+    //set dcminformation function for unite test,pass a filepath to it
+    DcmInformation* setDCMObject(QString FilePath);
     //Paint DCM image
     void PaintDCM(QPixmap &DCMPix);
     //read config from .xml file
@@ -63,7 +73,7 @@ public slots:
     //Choose a file from local disk to open,return Filepath selected
     QString SelectFile();
     //pass Filepath to construct dcm object
-    bool LoadFile();
+    bool LoadFile(QString OpenFilePath);
     //interface ,Save as another file format
     void SaveFile();
     //Exit Windows

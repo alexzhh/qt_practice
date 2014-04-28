@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->StudyData,SIGNAL(editingFinished()),SLOT(UpdataErrorInfo()));
     QObject::connect(ui->ContentData,SIGNAL(editingFinished()),SLOT(UpdataErrorInfo()));
     //QMessageBox::about(this,"",QString::number(ReadConfig().size()));
+
 }
 
 unsigned long MainWindow::GetInputState()
@@ -122,35 +123,30 @@ QString MainWindow::SelectFile()
                     "Dcm(*.dcm)");
         if(!OpenFilePath.isEmpty())
         {
-            DcmInformation* tmp = dcm;
-            dcm = new DcmInformation(OpenFilePath);
-            if(LoadFile())
-            {
-                InitDCMObject(tmp);
-            }
-            else
-            {
-                InitDCMObject(dcm);
-                dcm = tmp;
-                QMessageBox::warning(this,"Warning","Failed to open file");
-            }
+            LoadFile(OpenFilePath);
         }
         return OpenFilePath;
 }
 
-bool MainWindow::LoadFile()
+bool MainWindow::LoadFile(QString OpenFilePath)
 {
     bool result = true;
+    DcmInformation* tmp = dcm;
+    dcm = new DcmInformation(OpenFilePath);
     if(dcm->loadFromDCM())
     {
-      QPixmap qmap = dcm->drawDcmImage(ui->DCMPaint->width(),ui->DCMPaint->height());
-      PaintDCM(qmap);
-      FilePatientInfo = dcm->getAttributes();
-      ResetPatientInfo();
+        InitDCMObject(tmp);
+        QPixmap qmap = dcm->drawDcmImage(ui->DCMPaint->width(),ui->DCMPaint->height());
+        PaintDCM(qmap);
+        FilePatientInfo = dcm->getAttributes();
+        ResetPatientInfo();
     }
     else
     {
-       result = false;
+        result = false;
+        InitDCMObject(dcm);
+        dcm = tmp;
+        QMessageBox::warning(this,"Warning","Failed to open file");
     }
     return result;
 }
@@ -233,7 +229,7 @@ void MainWindow::SavePatientInfo2File()
     dcm->putAndInsertString(0x0008,0x0020,ui->StudyData->text());
     dcm->putAndInsertString(0x0008,0x0023,ui->ContentData->text());
     dcm->saveFile(dcm->getInputFile().toStdString().c_str());
-    LoadFile();
+    LoadFile(dcm->getInputFile());
 }
 
 void MainWindow::ResetPatientInfo()
@@ -259,6 +255,7 @@ void MainWindow::ResetPatientInfo()
 void MainWindow::PaintDCM(QPixmap &DCMPix)
 {
     ui->DCMPaint->setPixmap(DCMPix);
+
 }
 
 void MainWindow::UpdataErrorInfo()
