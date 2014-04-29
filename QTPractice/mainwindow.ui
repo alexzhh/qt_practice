@@ -106,10 +106,10 @@
         </widget>
        </item>
        <item row="3" column="1" colspan="2">
-        <widget class="QLineEdit" name="StudyData"/>
+        <widget class="QLineEdit" name="StudyDate"/>
        </item>
        <item row="3" column="3">
-        <widget class="QLabel" name="StudyDataException">
+        <widget class="QLabel" name="StudyDateException">
          <property name="text">
           <string/>
          </property>
@@ -123,10 +123,10 @@
         </widget>
        </item>
        <item row="4" column="1" colspan="2">
-        <widget class="QLineEdit" name="ContentData"/>
+        <widget class="QLineEdit" name="ContentDate"/>
        </item>
        <item row="4" column="3">
-        <widget class="QLabel" name="ContentDataException">
+        <widget class="QLabel" name="ContentDateException">
          <property name="text">
           <string/>
          </property>

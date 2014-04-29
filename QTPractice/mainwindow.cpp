@@ -21,8 +21,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->Name,SIGNAL(editingFinished()),SLOT(UpdataErrorInfo()));
     QObject::connect(ui->ID,SIGNAL(editingFinished()),SLOT(UpdataErrorInfo()));
     QObject::connect(ui->Age,SIGNAL(editingFinished()),SLOT(UpdataErrorInfo()));
-    QObject::connect(ui->StudyData,SIGNAL(editingFinished()),SLOT(UpdataErrorInfo()));
-    QObject::connect(ui->ContentData,SIGNAL(editingFinished()),SLOT(UpdataErrorInfo()));
+    QObject::connect(ui->StudyDate,SIGNAL(editingFinished()),SLOT(UpdataErrorInfo()));
+    QObject::connect(ui->ContentDate,SIGNAL(editingFinished()),SLOT(UpdataErrorInfo()));
     //QMessageBox::about(this,"",QString::number(ReadConfig().size()));
 
 }
@@ -44,6 +44,13 @@ void MainWindow::InitDCMObject(DcmInformation* dcmObject)
         delete dcmObject;
         dcmObject = NULL;
     }
+}
+void MainWindow::PopMessage(int msec, QString title, QString text, QWidget *parent)
+{
+    QMessageBox* m =new QMessageBox(QMessageBox::NoIcon,title,text,QMessageBox::Close,parent);
+    m->setAttribute(Qt::WA_DeleteOnClose);
+    m->show();
+    QTimer::singleShot(msec,m,SLOT(close()));
 }
 
 DcmInformation* MainWindow::getDCMObject()
@@ -146,7 +153,8 @@ bool MainWindow::LoadFile(QString OpenFilePath)
         result = false;
         InitDCMObject(dcm);
         dcm = tmp;
-        QMessageBox::warning(this,"Warning","Failed to open file");
+        //QMessageBox::warning(this,"Warning","Failed to open file");
+        PopMessage(2*1000,"Warning","Failed to open file");
     }
     return result;
 }
@@ -163,9 +171,9 @@ void MainWindow::SaveFile()
      dcm->customSaveFile();
    }
    else
-    QMessageBox::warning(
-                this,"DCM",
-                "Source file not found,please open file first");
+   {
+       PopMessage(2*1000,"DCM","Source file not found,please open file first",this);
+   }
 }
 
 void MainWindow::QuitWindows()
@@ -185,7 +193,8 @@ void MainWindow::EditModeChanged(bool EditChecked)
     {
         if(dcm==NULL)
         {
-            QMessageBox::warning(this,"Error","No File Opened!");
+            //QMessageBox::warning(this,"Error","No File Opened!");
+            PopMessage(2*1000,"Error","No File Opened!",this);
             ui->actionEdit->setChecked(false);
             return ;
         }
@@ -194,8 +203,8 @@ void MainWindow::EditModeChanged(bool EditChecked)
         ui->Name->setReadOnly(false);
         ui->ID->setReadOnly(false);
         ui->Age->setReadOnly(false);
-        ui->StudyData->setReadOnly(false);
-        ui->ContentData->setReadOnly(false);
+        ui->StudyDate->setReadOnly(false);
+        ui->ContentDate->setReadOnly(false);
     }
     else
     {
@@ -204,8 +213,8 @@ void MainWindow::EditModeChanged(bool EditChecked)
         ui->Name->setReadOnly(true);
         ui->ID->setReadOnly(true);
         ui->Age->setReadOnly(true);
-        ui->StudyData->setReadOnly(true);
-        ui->ContentData->setReadOnly(true);
+        ui->StudyDate->setReadOnly(true);
+        ui->ContentDate->setReadOnly(true);
     }
 }
 
@@ -216,8 +225,8 @@ void MainWindow::FillPatientInfo(PatientInfo Type, QString ValueFiled)
     case PatientID:  ui->ID->setText(ValueFiled);break;
     case PatientName:ui->Name->setText(ValueFiled);break;
     case PatientAge: ui->Age->setText(ValueFiled);break;
-    case StudyData:ui->StudyData->setText(ValueFiled);break;
-    case ContentData:ui->ContentData->setText(ValueFiled);break;
+    case StudyDate:ui->StudyDate->setText(ValueFiled);break;
+    case ContentDate:ui->ContentDate->setText(ValueFiled);break;
     }
 }
 
@@ -226,8 +235,8 @@ void MainWindow::SavePatientInfo2File()
     dcm->putAndInsertString(0x0010,0x0010,ui->Name->text());
     dcm->putAndInsertString(0x0010,0x0020,ui->ID->text());
     dcm->putAndInsertString(0x0010,0x1010,ui->Age->text());
-    dcm->putAndInsertString(0x0008,0x0020,ui->StudyData->text());
-    dcm->putAndInsertString(0x0008,0x0023,ui->ContentData->text());
+    dcm->putAndInsertString(0x0008,0x0020,ui->StudyDate->text());
+    dcm->putAndInsertString(0x0008,0x0023,ui->ContentDate->text());
     dcm->saveFile(dcm->getInputFile().toStdString().c_str());
     LoadFile(dcm->getInputFile());
 }
@@ -269,11 +278,11 @@ void MainWindow::UpdataErrorInfo()
     ui->AgeException->setText(
                 (true == CheckDataValid(PatientAge,ui->Age->text()))?
                     "":"Error");
-    ui->StudyDataException->setText(
-                (true == CheckDataValid(StudyData,ui->StudyData->text()))?
+    ui->StudyDateException->setText(
+                (true == CheckDataValid(StudyDate,ui->StudyDate->text()))?
                     "":"Error");
-    ui->ContentDataException->setText(
-                (true == CheckDataValid(ContentData,ui->ContentData->text()))?
+    ui->ContentDateException->setText(
+                (true == CheckDataValid(ContentDate,ui->ContentDate->text()))?
                     "":"Error");
     if(InputStatu != 0)
         ui->btn_Save->setEnabled(false);
@@ -304,17 +313,17 @@ bool MainWindow::CheckDataValid(PatientInfo VRType,const QString Value)
                     (clearflag(InputStatu,PatientAge)):
                     (setflag(InputStatu,PatientAge));
         break;
-    case StudyData:
+    case StudyDate:
         result = dcm->checkEachTag(4,Value.toStdString().c_str());
         (result == true)?
-                    (clearflag(InputStatu,StudyData)):
-                    (setflag(InputStatu,StudyData));
+                    (clearflag(InputStatu,StudyDate)):
+                    (setflag(InputStatu,StudyDate));
         break;
-    case ContentData:
+    case ContentDate:
         result = dcm->checkEachTag(4,Value.toStdString().c_str());
         (result == true)?
-                    (clearflag(InputStatu,ContentData)):
-                    (setflag(InputStatu,ContentData));
+                    (clearflag(InputStatu,ContentDate)):
+                    (setflag(InputStatu,ContentDate));
         break;
     }
     return result;

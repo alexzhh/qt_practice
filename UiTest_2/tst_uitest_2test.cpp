@@ -39,8 +39,8 @@ void TestGui::testInitial()
     QVERIFY(m->getui()->ID->text().isEmpty());
     QVERIFY(m->getui()->Age->text().isEmpty());
     QVERIFY(m->getui()->Name->text().isEmpty());
-    QVERIFY(m->getui()->ContentData->text().isEmpty());
-    QVERIFY(m->getui()->StudyData->text().isEmpty());
+    QVERIFY(m->getui()->ContentDate->text().isEmpty());
+    QVERIFY(m->getui()->StudyDate->text().isEmpty());
     QVERIFY(m->getui()->btn_Save->isHidden());
     QVERIFY(m->getui()->btn_Save->isHidden());
 }
@@ -71,8 +71,8 @@ void TestGui::testEditModeChanged(){
     QCOMPARE(m->getui()->Age->isReadOnly(),true);
     QCOMPARE(m->getui()->Name->isReadOnly(),true);
     QCOMPARE(m->getui()->ID->isReadOnly(),true);
-    QCOMPARE(m->getui()->ContentData->isReadOnly(),true);
-    QCOMPARE(m->getui()->StudyData->isReadOnly(),true);
+    QCOMPARE(m->getui()->ContentDate->isReadOnly(),true);
+    QCOMPARE(m->getui()->StudyDate->isReadOnly(),true);
     QCOMPARE(m->getui()->btn_Save->isHidden(),true);
     QCOMPARE(m->getui()->btn_Reset->isHidden(),true);
 }
@@ -83,8 +83,8 @@ void TestGui::testAEditModeChanged(){
     QCOMPARE(m->getui()->Age->isReadOnly(),false);
     QCOMPARE(m->getui()->Name->isReadOnly(),false);
     QCOMPARE(m->getui()->ID->isReadOnly(),false);
-    QCOMPARE(m->getui()->ContentData->isReadOnly(),false);
-    QCOMPARE(m->getui()->StudyData->isReadOnly(),false);
+    QCOMPARE(m->getui()->ContentDate->isReadOnly(),false);
+    QCOMPARE(m->getui()->StudyDate->isReadOnly(),false);
     QCOMPARE(m->getui()->btn_Save->isHidden(),false);
     QCOMPARE(m->getui()->btn_Reset->isHidden(),false);
 }
@@ -97,10 +97,10 @@ void TestGui::testAFillPatientInfo(){
     QVERIFY(m->getui()->ID->text()=="000484");
     m->FillPatientInfo(MainWindow::PatientName,"test");
     QVERIFY(m->getui()->Name->text()=="test");
-    m->FillPatientInfo(MainWindow::ContentData,"20090207");
-    QVERIFY(m->getui()->ContentData->text()=="20090207");
-    m->FillPatientInfo(MainWindow::StudyData,"20090207");
-    QVERIFY(m->getui()->StudyData->text()=="20090207");
+    m->FillPatientInfo(MainWindow::ContentDate,"20090207");
+    QVERIFY(m->getui()->ContentDate->text()=="20090207");
+    m->FillPatientInfo(MainWindow::StudyDate,"20090207");
+    QVERIFY(m->getui()->StudyDate->text()=="20090207");
 
 
 }
@@ -124,14 +124,14 @@ void TestGui::testASavePatientInfo2File_data(){
     listName.addKeyClick(Qt::Key_Backspace,Qt::ControlModifier);
     listName.addKeyClicks("test");
     QTest::newRow("Name") << listName << "test";
-    QTestEventList listContentData;
-    listContentData.addKeyClick(Qt::Key_Backspace,Qt::ControlModifier);
-    listContentData.addKeyClicks("10090207");
-    QTest::newRow("ContentData") << listContentData << "10090207";
-    QTestEventList listStudyData;
-    listStudyData.addKeyClick(Qt::Key_Backspace,Qt::ControlModifier);
-    listStudyData.addKeyClicks("10090207");
-    QTest::newRow("StudyData") << listStudyData << "10090207";
+    QTestEventList listContentDate;
+    listContentDate.addKeyClick(Qt::Key_Backspace,Qt::ControlModifier);
+    listContentDate.addKeyClicks("10090207");
+    QTest::newRow("ContentDate") << listContentDate << "10090207";
+    QTestEventList listStudyDate;
+    listStudyDate.addKeyClick(Qt::Key_Backspace,Qt::ControlModifier);
+    listStudyDate.addKeyClicks("10090207");
+    QTest::newRow("StudyDate") << listStudyDate << "10090207";
 }
 */
 
@@ -143,16 +143,16 @@ void TestGui::testASavePatientInfo2File(){
     QTest::keyClicks(m->getui()->ID, "100484");
     QTest::keyClick(m->getui()->Name, Qt::Key_Backspace,Qt::ControlModifier);
     QTest::keyClicks(m->getui()->Name, "1est");
-    QTest::keyClick(m->getui()->ContentData, Qt::Key_Backspace,Qt::ControlModifier);
-    QTest::keyClicks(m->getui()->ContentData, "10090207");
-    QTest::keyClick(m->getui()->StudyData, Qt::Key_Backspace,Qt::ControlModifier);
-    QTest::keyClicks(m->getui()->StudyData, "10090207");
+    QTest::keyClick(m->getui()->ContentDate, Qt::Key_Backspace,Qt::ControlModifier);
+    QTest::keyClicks(m->getui()->ContentDate, "10090207");
+    QTest::keyClick(m->getui()->StudyDate, Qt::Key_Backspace,Qt::ControlModifier);
+    QTest::keyClicks(m->getui()->StudyDate, "10090207");
     m->SavePatientInfo2File();
     QVERIFY(m->getui()->Age->text()=="160Y");
     QVERIFY(m->getui()->ID->text()=="100484");
     QVERIFY(m->getui()->Name->text()=="1est");
-    QVERIFY(m->getui()->ContentData->text()=="10090207");
-    QVERIFY(m->getui()->StudyData->text()=="10090207");
+    QVERIFY(m->getui()->ContentDate->text()=="10090207");
+    QVERIFY(m->getui()->StudyDate->text()=="10090207");
     //reset
     QTest::keyClick(m->getui()->Age, Qt::Key_Backspace,Qt::ControlModifier);
     QTest::keyClicks(m->getui()->Age, "060Y");
@@ -160,31 +160,31 @@ void TestGui::testASavePatientInfo2File(){
     QTest::keyClicks(m->getui()->ID, "000484");
     QTest::keyClick(m->getui()->Name, Qt::Key_Backspace,Qt::ControlModifier);
     QTest::keyClicks(m->getui()->Name, "test");
-    QTest::keyClick(m->getui()->ContentData, Qt::Key_Backspace,Qt::ControlModifier);
-    QTest::keyClicks(m->getui()->ContentData, "20090207");
-    QTest::keyClick(m->getui()->StudyData, Qt::Key_Backspace,Qt::ControlModifier);
-    QTest::keyClicks(m->getui()->StudyData, "20090207");
+    QTest::keyClick(m->getui()->ContentDate, Qt::Key_Backspace,Qt::ControlModifier);
+    QTest::keyClicks(m->getui()->ContentDate, "20090207");
+    QTest::keyClick(m->getui()->StudyDate, Qt::Key_Backspace,Qt::ControlModifier);
+    QTest::keyClicks(m->getui()->StudyDate, "20090207");
     m->SavePatientInfo2File();
 }
 void TestGui::testAResetPatientInfo(){
     QTest::keyClicks(m->getui()->Age, "160Y");
     QTest::keyClicks(m->getui()->ID, "100484");
     QTest::keyClicks(m->getui()->Name, "1est");
-    QTest::keyClicks(m->getui()->ContentData, "10090207");
-    QTest::keyClicks(m->getui()->StudyData, "10090207");
+    QTest::keyClicks(m->getui()->ContentDate, "10090207");
+    QTest::keyClicks(m->getui()->StudyDate, "10090207");
     m->ResetPatientInfo();
     QVERIFY(m->getui()->Age->text()=="060Y");
     QVERIFY(m->getui()->ID->text()=="000484");
     QVERIFY(m->getui()->Name->text()=="test");
-    QVERIFY(m->getui()->ContentData->text()=="20090207");
-    QVERIFY(m->getui()->StudyData->text()=="20090207");
+    QVERIFY(m->getui()->ContentDate->text()=="20090207");
+    QVERIFY(m->getui()->StudyDate->text()=="20090207");
 }
 void TestGui::testUpdataErrorInfo(){
     //correct testing
     m->UpdataErrorInfo();
     QVERIFY(m->getui()->AgeException->text()=="");
-    QVERIFY(m->getui()->ContentDataException->text()=="");
-    QVERIFY(m->getui()->StudyDataException->text()=="");
+    QVERIFY(m->getui()->ContentDateException->text()=="");
+    QVERIFY(m->getui()->StudyDateException->text()=="");
     QVERIFY(m->getui()->IDException->text()=="");
     QVERIFY(m->getui()->NameException->text()=="");
 }
@@ -193,12 +193,12 @@ void TestGui::testAUpdataErrorInfo(){
     //ID和Name都没有效验，所以没测
     //error testing
     QTest::keyClicks(m->getui()->Age, "0600");
-    QTest::keyClicks(m->getui()->ContentData, "test");
-    QTest::keyClicks(m->getui()->StudyData, "test");
+    QTest::keyClicks(m->getui()->ContentDate, "test");
+    QTest::keyClicks(m->getui()->StudyDate, "test");
     m->UpdataErrorInfo();
     QVERIFY(m->getui()->AgeException->text()=="Error");
-    QVERIFY(m->getui()->ContentDataException->text()=="Error");
-    QVERIFY(m->getui()->StudyDataException->text()=="Error");
+    QVERIFY(m->getui()->ContentDateException->text()=="Error");
+    QVERIFY(m->getui()->StudyDateException->text()=="Error");
 }
 
 void TestGui::cleanupTestCase()

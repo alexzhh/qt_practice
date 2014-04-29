@@ -53,11 +53,11 @@ public:
     QLineEdit *ID;
     QLabel *IDException;
     QLabel *label_4;
-    QLineEdit *StudyData;
-    QLabel *StudyDataException;
+    QLineEdit *StudyDate;
+    QLabel *StudyDateException;
     QLabel *label_5;
-    QLineEdit *ContentData;
-    QLabel *ContentDataException;
+    QLineEdit *ContentDate;
+    QLabel *ContentDateException;
     QPushButton *btn_Save;
     QPushButton *btn_Reset;
     QMenuBar *menuBar;
@@ -159,30 +159,30 @@ public:
 
         gridLayout->addWidget(label_4, 3, 0, 1, 1);
 
-        StudyData = new QLineEdit(groupBox);
-        StudyData->setObjectName(QStringLiteral("StudyData"));
+        StudyDate = new QLineEdit(groupBox);
+        StudyDate->setObjectName(QStringLiteral("StudyDate"));
 
-        gridLayout->addWidget(StudyData, 3, 1, 1, 2);
+        gridLayout->addWidget(StudyDate, 3, 1, 1, 2);
 
-        StudyDataException = new QLabel(groupBox);
-        StudyDataException->setObjectName(QStringLiteral("StudyDataException"));
+        StudyDateException = new QLabel(groupBox);
+        StudyDateException->setObjectName(QStringLiteral("StudyDateException"));
 
-        gridLayout->addWidget(StudyDataException, 3, 3, 1, 1);
+        gridLayout->addWidget(StudyDateException, 3, 3, 1, 1);
 
         label_5 = new QLabel(groupBox);
         label_5->setObjectName(QStringLiteral("label_5"));
 
         gridLayout->addWidget(label_5, 4, 0, 1, 1);
 
-        ContentData = new QLineEdit(groupBox);
-        ContentData->setObjectName(QStringLiteral("ContentData"));
+        ContentDate = new QLineEdit(groupBox);
+        ContentDate->setObjectName(QStringLiteral("ContentDate"));
 
-        gridLayout->addWidget(ContentData, 4, 1, 1, 2);
+        gridLayout->addWidget(ContentDate, 4, 1, 1, 2);
 
-        ContentDataException = new QLabel(groupBox);
-        ContentDataException->setObjectName(QStringLiteral("ContentDataException"));
+        ContentDateException = new QLabel(groupBox);
+        ContentDateException->setObjectName(QStringLiteral("ContentDateException"));
 
-        gridLayout->addWidget(ContentDataException, 4, 3, 1, 1);
+        gridLayout->addWidget(ContentDateException, 4, 3, 1, 1);
 
         btn_Save = new QPushButton(groupBox);
         btn_Save->setObjectName(QStringLiteral("btn_Save"));
@@ -243,9 +243,9 @@ public:
         label_3->setText(QApplication::translate("MainWindow", "\347\227\205 \344\272\272 ID\357\274\232", 0));
         IDException->setText(QString());
         label_4->setText(QApplication::translate("MainWindow", "\346\243\200\346\237\245\346\227\266\351\227\264\357\274\232", 0));
-        StudyDataException->setText(QString());
+        StudyDateException->setText(QString());
         label_5->setText(QApplication::translate("MainWindow", "\346\213\215\347\211\207\346\227\266\351\227\264\357\274\232", 0));
-        ContentDataException->setText(QString());
+        ContentDateException->setText(QString());
         btn_Save->setText(QApplication::translate("MainWindow", "Save", 0));
         btn_Reset->setText(QApplication::translate("MainWindow", "Reset", 0));
         menuFile_F->setTitle(QApplication::translate("MainWindow", "File(&F)", 0));

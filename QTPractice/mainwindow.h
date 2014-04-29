@@ -8,6 +8,7 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QVector>
+#include <QTimer>
 #include "dcminformation.h"
 
 namespace Ui {
@@ -39,8 +40,8 @@ public:
         PatientID=0,
         PatientName,
         PatientAge,
-        StudyData,
-        ContentData
+        StudyDate,
+        ContentDate
     };
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
@@ -70,6 +71,8 @@ public:
     QVector<Elementinfo> ReadConfig();
     //init dcmobject(free space)
     void InitDCMObject(DcmInformation* dcmObject);
+    //pop up  message
+    void PopMessage(int msec,QString title,QString text,QWidget* parent=0);
 public slots:
     //Choose a file from local disk to open,return Filepath selected
     QString SelectFile();
