@@ -27,21 +27,21 @@ typedef struct Elementinfo
     int     EVR;
 }Elementinfo;
 
-enum PatientInfo
-{
-    PatientID=0,
-    PatientName,
-    PatientAge,
-    StudyData,
-    ContentData
-};
+
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-
+    enum PatientInfo
+    {
+        PatientID=0,
+        PatientName,
+        PatientAge,
+        StudyData,
+        ContentData
+    };
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 

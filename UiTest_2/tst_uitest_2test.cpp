@@ -15,6 +15,7 @@ private slots:
     void testInitial();
     void testALoadFile();
     void testLoadFile();
+    void testSaveFile();
     void testEditModeChanged();
     void testAEditModeChanged();
     void testAFillPatientInfo();
@@ -53,9 +54,17 @@ void TestGui::testLoadFile(){
 }
 
 
-//void TestGui::testSaveFile(){
+void TestGui::testSaveFile(){
+    m->getDCMObject()->setOutputFile("test.dcm");
+    m->getDCMObject()->customSaveFile();
+    QVERIFY(m->LoadFile("test.dcm")==true);
+    m->getDCMObject()->setOutputFile("test.xml");
+    m->getDCMObject()->customSaveFile();
+    QVERIFY(QFile("test.xml").exists());
+    QFile("test.xml").remove();
+    QFile("test.dcm").remove();
+}
 
-//}
 
 void TestGui::testEditModeChanged(){
     m->EditModeChanged(false),QString("");
