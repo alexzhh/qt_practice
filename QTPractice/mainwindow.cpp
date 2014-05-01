@@ -278,19 +278,19 @@ void MainWindow::UpdataErrorInfo()
 {
     ui->IDException->setText(
                 (true == dcm->checkEachTag("PatientID",ui->ID->text().toStdString().c_str()))?
-                    "":"Error");
+                    (clearflag(inputState,PatientID),""):(setflag(inputState,PatientID) ,"Error"));
     ui->NameException->setText(
                 (true == dcm->checkEachTag("PatientName",ui->Name->text().toStdString().c_str()))?
-                    "":"Error");
+                    (clearflag(inputState,PatientName),""):(setflag(inputState,PatientName) ,"Error"));
     ui->AgeException->setText(
                 (true == dcm->checkEachTag("PatientAge",ui->Age->text().toStdString().c_str()))?
-                    "":"Error");
+                    (clearflag(inputState,PatientAge),""):(setflag(inputState,PatientAge) ,"Error"));
     ui->StudyDateException->setText(
                 (true == dcm->checkEachTag("StudyDate",ui->StudyDate->text().toStdString().c_str()))?
-                    "":"Error");
+                    (clearflag(inputState,StudyDate),""):(setflag(inputState,StudyDate) ,"Error"));
     ui->ContentDateException->setText(
                 (true == dcm->checkEachTag("ContentDate",ui->ContentDate->text().toStdString().c_str()))?
-                    "":"Error");
+                    (clearflag(inputState,ContentDate),""):(setflag(inputState,ContentDate) ,"Error"));
     if(inputState != 0)
         ui->btn_Save->setEnabled(false);
     else
