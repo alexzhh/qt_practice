@@ -50,43 +50,45 @@ private:
     Ui::MainWindow *ui;
     //Save some Patient Information from file
     //patient name,patient age,patient id,study date,content date etc.
-    QVector<DcmElement*> FilePatientInfo;
+    QVector<DcmElement*> filePatientInfo;
     DcmInformation* dcm;
     //save config information from .xml
-    QVector<Elementinfo> Config;
+    QVector<Elementinfo> config;
     //all user input flag,0 if ok,nonzero otherwise
-    unsigned long InputStatu;
+    unsigned long inputState;
 public:
-    //get InputStatu
+    //get InputState
     unsigned long GetInputState();
     //get ui for unit test
-    Ui::MainWindow * getui();
+    Ui::MainWindow * GetUi();
     //get dcminformation function for unite test
-    DcmInformation* getDCMObject();
+    DcmInformation* GetDCMObject();
     //set dcminformation function for unite test,pass a filepath to it
-    DcmInformation* setDCMObject(QString FilePath);
+    DcmInformation* SetDCMObject(QString FilePath);
     //Paint DCM image
-    void PaintDCM(QPixmap &DCMPix);
+    void Paint(QPixmap &dcmPix);
     //read config from .xml file
-    QVector<Elementinfo> ReadConfig();
+    QVector<Elementinfo> ReadConfig(QString ConfigPath);
     //init dcmobject(free space)
     void InitDCMObject(DcmInformation* dcmObject);
     //pop up  message
     void PopMessage(int msec,QString title,QString text,QWidget* parent=0);
 public slots:
     //Choose a file from local disk to open,return Filepath selected
-    QString SelectFile();
+    QString SelectOpenFile();
     //pass Filepath to construct dcm object
-    bool LoadFile(QString OpenFilePath);
-    //interface ,Save as another file format
-    void SaveFile();
+    bool LoadFile(QString openFilePath);
+    //select a filepath to save object
+    void SelectSaveFile();
+    //Save Object to file
+    void SaveFile(QString filePath);
     //Exit Windows
     void QuitWindows();
     //when Edit menu checked,user can rewrite patient info,
     //otherwise,it would be read only
     void EditModeChanged(bool);
     //display Patient informatin
-    void FillPatientInfo(PatientInfo Type,QString ValueFiled);
+    void FillPatientInfo(PatientInfo type,QString valueFiled);
     //Write Patient Information(modified by user) to File
     void SavePatientInfo2File();
     //Use default Patient information
@@ -94,6 +96,6 @@ public slots:
     //Alert while error input
     void UpdataErrorInfo();
     //validate user input,true if ok, false otherwise
-    bool CheckDataValid(PatientInfo VRType,const QString Value);
+    bool CheckDataValid(QString patientInfo, const QString value);
 };
 #endif // MAINWINDOW_H

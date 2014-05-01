@@ -4,16 +4,16 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow),
     dcm(NULL),
-    InputStatu(0)
+    ui(new Ui::MainWindow),
+    inputState(0)
 {
     ui->setupUi(this);
     EditModeChanged(false);
 
     QObject::connect(ui->actionQuit,SIGNAL(triggered()),SLOT(QuitWindows()));
-    QObject::connect(ui->actionOpen,SIGNAL(triggered()),SLOT(SelectFile()));
-    QObject::connect(ui->actionSave_As,SIGNAL(triggered()),SLOT(SaveFile()));
+    QObject::connect(ui->actionOpen,SIGNAL(triggered()),SLOT(SelectOpenFile()));
+    QObject::connect(ui->actionSave_As,SIGNAL(triggered()),SLOT(SelectSaveFile()));
     QObject::connect(ui->actionEdit,SIGNAL(triggered(bool)),SLOT(EditModeChanged(bool)));
     QObject::connect(ui->btn_Reset,SIGNAL(clicked()),SLOT(ResetPatientInfo()));
     QObject::connect(ui->btn_Save,SIGNAL(clicked()),SLOT(SavePatientInfo2File()));
@@ -29,10 +29,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
 unsigned long MainWindow::GetInputState()
 {
-    return this->InputStatu;
+    return this->inputState;
 }
 
-Ui::MainWindow * MainWindow::getui()
+Ui::MainWindow * MainWindow::GetUi()
 {
     return this->ui;
 }
@@ -45,6 +45,7 @@ void MainWindow::InitDCMObject(DcmInformation* dcmObject)
         dcmObject = NULL;
     }
 }
+
 void MainWindow::PopMessage(int msec, QString title, QString text, QWidget *parent)
 {
     QMessageBox* m =new QMessageBox(QMessageBox::NoIcon,title,text,QMessageBox::Close,parent);
@@ -53,17 +54,17 @@ void MainWindow::PopMessage(int msec, QString title, QString text, QWidget *pare
     QTimer::singleShot(msec,m,SLOT(close()));
 }
 
-DcmInformation* MainWindow::getDCMObject()
+DcmInformation* MainWindow::GetDCMObject()
 {
     return this->dcm;
 }
 
-QVector<Elementinfo> MainWindow::ReadConfig()
+QVector<Elementinfo> MainWindow::ReadConfig(QString configPath)
 {
     QFile xmlfile;
     QDomDocument doc;
     QString errmsg="";
-    xmlfile.setFileName("config.xml");
+    xmlfile.setFileName(configPath);
     if(xmlfile.exists())
     {
         if(!xmlfile.open(QFile::ReadOnly) ||
@@ -72,7 +73,7 @@ QVector<Elementinfo> MainWindow::ReadConfig()
             //"Read Config Failed!"
             QMessageBox::warning(this,"File","Error:"+errmsg);
             xmlfile.close();
-            return Config;
+            return config;
         }
         QDomNodeList nodelist=doc.elementsByTagName("Element");
         for(int i=0;i<nodelist.size();i++)
@@ -114,20 +115,21 @@ QVector<Elementinfo> MainWindow::ReadConfig()
                     ele.VRDescription=attrib.item(j).nodeValue();
             }
             if(ValidConfigItem)
-                Config.push_back(ele);
+                config.push_back(ele);
         }
     }
     xmlfile.close();
-    return Config;
+    return config;
 }
 
-QString MainWindow::SelectFile()
+QString MainWindow::SelectOpenFile()
 {
         QString OpenFilePath=QFileDialog::getOpenFileName(
                     NULL,
                     QString::fromStdString("Open File"),
                     QDir::currentPath(),
-                    "Dcm(*.dcm)");
+                    "DCM File(*.dcm)"
+                    );
         if(!OpenFilePath.isEmpty())
         {
             LoadFile(OpenFilePath);
@@ -135,17 +137,17 @@ QString MainWindow::SelectFile()
         return OpenFilePath;
 }
 
-bool MainWindow::LoadFile(QString OpenFilePath)
+bool MainWindow::LoadFile(QString openFilePath)
 {
     bool result = true;
     DcmInformation* tmp = dcm;
-    dcm = new DcmInformation(OpenFilePath);
+    dcm = new DcmInformation(openFilePath);
     if(dcm->loadFromDCM())
     {
         InitDCMObject(tmp);
         QPixmap qmap = dcm->drawDcmImage(ui->DCMPaint->width(),ui->DCMPaint->height());
-        PaintDCM(qmap);
-        FilePatientInfo = dcm->getAttributes();
+        Paint(qmap);
+        filePatientInfo = dcm->getAttributes();
         ResetPatientInfo();
     }
     else
@@ -159,7 +161,7 @@ bool MainWindow::LoadFile(QString OpenFilePath)
     return result;
 }
 
-void MainWindow::SaveFile()
+void MainWindow::SelectSaveFile()
 {
    if(dcm!=NULL)
    {
@@ -167,13 +169,18 @@ void MainWindow::SaveFile()
                  NULL,
                  QString::fromStdString("Save File"),
                  QDir::currentPath(),"Dcm(*.dcm) ;; Xml(*.xml)");
-     dcm->setOutputFile(spath);
-     dcm->customSaveFile();
+     SaveFile(spath);
    }
    else
    {
        PopMessage(2*1000,"DCM","Source file not found,please open file first",this);
    }
+}
+
+void MainWindow::SaveFile(QString filePath)
+{
+    dcm->setOutputFile(filePath);
+    dcm->customSaveFile();
 }
 
 void MainWindow::QuitWindows()
@@ -218,25 +225,25 @@ void MainWindow::EditModeChanged(bool EditChecked)
     }
 }
 
-void MainWindow::FillPatientInfo(PatientInfo Type, QString ValueFiled)
+void MainWindow::FillPatientInfo(PatientInfo type, QString valueFiled)
 {
-    switch(Type)
+    switch(type)
     {
-    case PatientID:  ui->ID->setText(ValueFiled);break;
-    case PatientName:ui->Name->setText(ValueFiled);break;
-    case PatientAge: ui->Age->setText(ValueFiled);break;
-    case StudyDate:ui->StudyDate->setText(ValueFiled);break;
-    case ContentDate:ui->ContentDate->setText(ValueFiled);break;
+    case PatientID:  ui->ID->setText(valueFiled);break;
+    case PatientName:ui->Name->setText(valueFiled);break;
+    case PatientAge: ui->Age->setText(valueFiled);break;
+    case StudyDate:ui->StudyDate->setText(valueFiled);break;
+    case ContentDate:ui->ContentDate->setText(valueFiled);break;
     }
 }
 
 void MainWindow::SavePatientInfo2File()
 {
-    dcm->putAndInsertString(0x0010,0x0010,ui->Name->text());
-    dcm->putAndInsertString(0x0010,0x0020,ui->ID->text());
-    dcm->putAndInsertString(0x0010,0x1010,ui->Age->text());
-    dcm->putAndInsertString(0x0008,0x0020,ui->StudyDate->text());
-    dcm->putAndInsertString(0x0008,0x0023,ui->ContentDate->text());
+    dcm->putAndInsertString("PatientName",ui->Name->text());
+    dcm->putAndInsertString("PatientID",ui->ID->text());
+    dcm->putAndInsertString("PatientAge",ui->Age->text());
+    dcm->putAndInsertString("StudyDate",ui->StudyDate->text());
+    dcm->putAndInsertString("ContentDate",ui->ContentDate->text());
     dcm->saveFile(dcm->getInputFile().toStdString().c_str());
     LoadFile(dcm->getInputFile());
 }
@@ -244,7 +251,7 @@ void MainWindow::SavePatientInfo2File()
 void MainWindow::ResetPatientInfo()
 {
     int index=0;
-    foreach(DcmElement* dc,FilePatientInfo)
+    foreach(DcmElement* dc,filePatientInfo)
     {
         if(dc!=NULL)
         {
@@ -261,76 +268,78 @@ void MainWindow::ResetPatientInfo()
     UpdataErrorInfo();
 }
 
-void MainWindow::PaintDCM(QPixmap &DCMPix)
+void MainWindow::Paint(QPixmap &dcmPix)
 {
-    ui->DCMPaint->setPixmap(DCMPix);
+    ui->DCMPaint->setPixmap(dcmPix);
 
 }
 
 void MainWindow::UpdataErrorInfo()
 {
     ui->IDException->setText(
-                (true == CheckDataValid(PatientID,ui->ID->text()))?
+                (true == dcm->checkEachTag("PatientID",ui->ID->text().toStdString().c_str()))?
                     "":"Error");
     ui->NameException->setText(
-                (true == CheckDataValid(PatientName,ui->Name->text()))?
+                (true == dcm->checkEachTag("PatientName",ui->Name->text().toStdString().c_str()))?
                     "":"Error");
     ui->AgeException->setText(
-                (true == CheckDataValid(PatientAge,ui->Age->text()))?
+                (true == dcm->checkEachTag("PatientAge",ui->Age->text().toStdString().c_str()))?
                     "":"Error");
     ui->StudyDateException->setText(
-                (true == CheckDataValid(StudyDate,ui->StudyDate->text()))?
+                (true == dcm->checkEachTag("StudyDate",ui->StudyDate->text().toStdString().c_str()))?
                     "":"Error");
     ui->ContentDateException->setText(
-                (true == CheckDataValid(ContentDate,ui->ContentDate->text()))?
+                (true == dcm->checkEachTag("ContentDate",ui->ContentDate->text().toStdString().c_str()))?
                     "":"Error");
-    if(InputStatu != 0)
+    if(inputState != 0)
         ui->btn_Save->setEnabled(false);
     else
         ui->btn_Save->setEnabled(true);
 }
 
-bool MainWindow::CheckDataValid(PatientInfo VRType,const QString Value)
+bool MainWindow::CheckDataValid(QString patientInfo, const QString value)
 {
     bool result = true;
-    switch(VRType)
+    /*switch(VRType)
     {
     case PatientID:
-        result = dcm->checkEachTag(10,Value.toStdString().c_str());
+        result = dcm->checkEachTag("PatientID",Value.toStdString().c_str());
         (result == true)?
-                    (clearflag(InputStatu,PatientID)):
-                    (setflag(InputStatu,PatientID));
+                    (clearflag(InputState,PatientID)):
+                    (setflag(InputState,PatientID));
         break;
     case PatientName:
-        result = dcm->checkEachTag(15,Value.toStdString().c_str());
+        result = dcm->checkEachTag("PatientName",Value.toStdString().c_str());
         (result == true)?
-                    (clearflag(InputStatu,PatientName)):
-                    (setflag(InputStatu,PatientName));
+                    (clearflag(InputState,PatientName)):
+                    (setflag(InputState,PatientName));
         break;
     case PatientAge:
-        result = dcm->checkEachTag(1,Value.toStdString().c_str());
+        result = dcm->checkEachTag("PatientAge",Value.toStdString().c_str());
         (result == true)?
-                    (clearflag(InputStatu,PatientAge)):
-                    (setflag(InputStatu,PatientAge));
+                    (clearflag(InputState,PatientAge)):
+                    (setflag(InputState,PatientAge));
         break;
     case StudyDate:
-        result = dcm->checkEachTag(4,Value.toStdString().c_str());
+        result = dcm->checkEachTag("StudyDate",Value.toStdString().c_str());
         (result == true)?
-                    (clearflag(InputStatu,StudyDate)):
-                    (setflag(InputStatu,StudyDate));
+                    (clearflag(InputState,StudyDate)):
+                    (setflag(InputState,StudyDate));
         break;
     case ContentDate:
-        result = dcm->checkEachTag(4,Value.toStdString().c_str());
+        result = dcm->checkEachTag("ContentDate",Value.toStdString().c_str());
         (result == true)?
-                    (clearflag(InputStatu,ContentDate)):
-                    (setflag(InputStatu,ContentDate));
+                    (clearflag(InputState,ContentDate)):
+                    (setflag(InputState,ContentDate));
         break;
-    }
+    }*/
     return result;
 }
 
 MainWindow::~MainWindow()
 {
-    delete dcm;
+    if(dcm!=NULL)
+        delete dcm;
+
     delete ui;
 }
