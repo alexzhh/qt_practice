@@ -54,17 +54,63 @@ int ImageView::getImageWidth()
 }
 
 
-QPixmap ImageView::drawDcmImage(int width, int height)
+QPixmap ImageView::drawDcmImage(QPixmap img, int width, int height)
+{
+   scaleDcmImage(width,height);
+   renderImage();
+   return img.fromImage( *this->qimage);
+}
+
+
+QBitmap ImageView::drawDcmImage(QBitmap img, int width, int height)
+{
+   scaleDcmImage(width,height);
+   renderImage();
+   return img.fromImage( *this->qimage);
+}
+
+
+QImage ImageView::drawDcmImage(int width, int height)
+{
+   scaleDcmImage(width,height);
+   renderImage();
+   return *this->qimage;
+}
+
+
+//QPicture ImageView::drawDcmImage(QPicture img, int width, int height)
+//{
+//   renderImage();
+//   img.setData((char *)qimage->bits(),qimage->byteCount());
+//   return img;
+//}
+
+void ImageView::scaleDcmImage(const int & width, const int & height)
+{
+   dicomImage = dicomImage->createScaledImage(
+     (imageWidth <= width ? (ulong)imageWidth : (ulong)width),
+     (imageHeight <= height ? (ulong)imageHeight : (ulong)height));
+   //scale the picture from dicomImage;
+   //reset the width and height after scale
+   imageWidth = dicomImage->getWidth();
+   imageHeight = dicomImage->getHeight();
+}
+
+
+void ImageView::rotaterDcmImage(const double degree)
+{
+   QTransform transf;
+   transf.rotate(degree);
+   qimage->transformed(transf);
+}
+
+
+void ImageView::renderImage()
 {
    if(dicomImage->isMonochrome())
-      this->drawMonochrome(); // draw Monochrome picture
+     this->drawMonochrome(); // draw Monochrome picture
    else
-      this->drawRGB();      // draw RGB picture
-
-   return QPixmap::fromImage( *qimage).scaled(
-     (imageWidth <= width ? imageWidth : width),
-     (imageHeight <= height ? imageHeight : height));
-    // get mininum width and height, scale the picture
+     this->drawRGB();      // draw RGB picture
 }
 
 

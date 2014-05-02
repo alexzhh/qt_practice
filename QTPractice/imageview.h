@@ -3,6 +3,8 @@
 #include <dcmtk/dcmimgle/dcmimage.h>
 #include <QImage>
 #include <QPixmap>
+#include <QBitmap>
+#include <QPicture>
 
 #define roundf(x) (int(x+0.5))
 
@@ -23,8 +25,19 @@ public:
     int getImageHeight();//return image height
     bool loadDcmFile(QString oPath);
     // load DCM data from *.dcm
-    QPixmap drawDcmImage(int width, int height);
+    QImage  drawDcmImage(int width, int height);
+    //draw image return QImage
+    QPixmap drawDcmImage(QPixmap img, int width, int height);
     //draw image return QPixmap
+    QBitmap drawDcmImage(QBitmap img, int width, int height);
+    //draw image return QBitmap
+//    QPicture drawDcmImage(QPicture  img, int width, int height);
+    void renderImage();
+    //draw Monochrome picture or RGB picture
+    void scaleDcmImage(const int & width, const int & height);
+    //scale the picture from dicomImage;
+    void rotaterDcmImage(const double degree);
+    //rotate the picture from dicomImage(any angle);
     template <typename T>  //c++ template
     void MonochromeColorTrans(const T *pixelData);
     //Assign pixel stream(Monochrome) to qimage bits
