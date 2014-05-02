@@ -15,6 +15,15 @@
 //#define PatientImageDate (0x0008,0x0023)
 //#define PatientImageTime (0x0008,0x0033)
 
+typedef struct Elementinfo
+{
+    unsigned short GTag;
+    unsigned short ETag;
+    QString TagName;
+    QString VRDescription;
+    int     EVR;
+}Elementinfo;
+
 enum FileFliter{
     Type_XML,   //xml
     Type_DCM,   //dcm
@@ -26,7 +35,9 @@ class DcmInformation
 {
   private:
      QVector <DcmElement*> info;  //save the DcmElement element
+     QVector <Elementinfo> fromCfgTag;//save information from config file
      void setAttributes(Uint16, Uint16); //set the DcmElement element to QVector<DcmElement*>
+     void setAttributes(); //set information to QVector <Elementinfo>
      QString inputFilePath; // Loading file path
      QString outputFilePath; // saving file path
 
@@ -47,10 +58,14 @@ class DcmInformation
      QString getInputFile(); // get Input File path (inputFilePath)
      QString getOutputFile();// get Output File path (OutputFilePath)
      QPixmap drawDcmImage(int width,int height); //draw image return QPixmap
-     void putAndInsertString(Uint16 group, Uint16 element, const QString& value);
+     void putAndInsertString(const QString tagname, const QString& value);
      //Change the value replaced the original value of tag
      bool checkEachTag(const int & dcmevr,const char * value);
-     //Check the validity of each tag
+     //Check the validity of each tag (input DcmEVR)
+     bool checkEachTag(const QString tagname, const char *value);
+     //Check the validity of each tag (input TagName)
+     Elementinfo findTagFromTagName(const QString tagname);
+     //give tagname to find tag return Elementinfo
 };
 
 #endif

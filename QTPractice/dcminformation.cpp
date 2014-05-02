@@ -4,6 +4,8 @@ DcmInformation::DcmInformation(QString iPath, QString oPath)
 {
   this->inputFilePath = iPath;
   this->outputFilePath = oPath;
+
+  setAttributes();
 }
 
 
@@ -32,6 +34,30 @@ void DcmInformation::setAttributes(Uint16 GroupNum, Uint16 ElementNum)
 }
 
 
+void DcmInformation::setAttributes()
+{
+   Elementinfo annotation[5];
+   fromCfgTag.clear();
+   annotation[0].GTag = 0x0010; annotation[0].ETag = 0x0020;
+   annotation[0].TagName = "PatientID";
+   annotation[0].EVR = EVR_LO;
+   annotation[1].GTag = 0x0010; annotation[1].ETag = 0x0010;
+   annotation[1].TagName = "PatientName";
+   annotation[1].EVR = EVR_PN;
+   annotation[2].GTag = 0x0010; annotation[2].ETag = 0x1010;
+   annotation[2].TagName = "PatientAge";
+   annotation[2].EVR = EVR_AS;
+   annotation[3].GTag = 0x0008; annotation[3].ETag = 0x0020;
+   annotation[3].TagName = "StudyDate";
+   annotation[3].EVR = EVR_DA;
+   annotation[4].GTag = 0x0008; annotation[4].ETag = 0x0023;
+   annotation[4].TagName = "ContentDate";
+   annotation[4].EVR = EVR_DA;
+   for(int i=0;i<5;++i)
+    fromCfgTag.push_back(annotation[i]);
+}
+
+
 QVector <DcmElement*> DcmInformation::getAttributes()
 {
    info.clear();
@@ -46,6 +72,16 @@ QVector <DcmElement*> DcmInformation::getAttributes()
 }
 
 
+Elementinfo DcmInformation::findTagFromTagName(const QString tagname)
+{
+   foreach(Elementinfo ele,fromCfgTag)
+   {
+     if(tagname == ele.TagName)
+       return ele;
+   }
+}
+
+
 QString DcmInformation::getStringlizeTag(const DcmTag& dcmtag)
 {
    return dcmtag.toString().c_str();
@@ -55,6 +91,13 @@ QString DcmInformation::getStringlizeTag(const DcmTag& dcmtag)
 bool DcmInformation::endOfDataSet(const DcmTag& dcmtag)
 {
    return "(7fe0,0010)" == this->getStringlizeTag(dcmtag);
+}
+
+
+bool DcmInformation::checkEachTag(const QString tagname, const char *value)
+{
+   Elementinfo eletag = findTagFromTagName(tagname);
+   return checkEachTag(eletag.EVR, value);
 }
 
 
@@ -161,15 +204,15 @@ QPixmap DcmInformation::drawDcmImage(int width, int height)
 {
    ImageView drawImage;
    if(drawImage.loadDcmFile(this->inputFilePath))
-     return drawImage.drawDcmImage(width,height);
-   else
-     return NULL; //error
+     return drawImage.drawDcmImage(QPixmap(),width,height);
+   return QPixmap();
 }
 
 
-void DcmInformation::putAndInsertString(Uint16 group, Uint16 element, const QString &value)
+void DcmInformation::putAndInsertString(const QString tagname, const QString& value)
 {
-   this->getDataset()->putAndInsertString(DcmTagKey(group,element),
+   Elementinfo eletag = findTagFromTagName(tagname);
+   this->getDataset()->putAndInsertString(DcmTagKey(eletag.GTag,eletag.ETag),
                                       value.toStdString().c_str());
 }
 
