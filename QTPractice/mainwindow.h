@@ -19,14 +19,14 @@ class MainWindow;
 #define clearflag(data,pos) (data=(data & ~(1<<pos)))
 
 //A struct Save single Config information
-typedef struct Elementinfo
-{
-    unsigned short GTag;
-    unsigned short ETag;
-    QString TagName;
-    QString VRDescription;
-    int     EVR;
-}Elementinfo;
+//typedef struct Elementinfo
+//{
+//    unsigned short GTag;
+//    unsigned short ETag;
+//    QString TagName;
+//    QString VRDescription;
+//    int     EVR;
+//}Elementinfo;
 
 
 
@@ -94,7 +94,7 @@ public slots:
     //Use default Patient information
     void ResetPatientInfo();
     //Alert while error input
-    void UpdataErrorInfo();
+    void UpdateErrorInfo();
     //validate user input,true if ok, false otherwise
     bool CheckDataValid(QString patientInfo, const QString value);
 };

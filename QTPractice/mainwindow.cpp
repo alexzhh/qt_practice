@@ -18,11 +18,11 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->btn_Reset,SIGNAL(clicked()),SLOT(ResetPatientInfo()));
     QObject::connect(ui->btn_Save,SIGNAL(clicked()),SLOT(SavePatientInfo2File()));
 
-    QObject::connect(ui->Name,SIGNAL(editingFinished()),SLOT(UpdataErrorInfo()));
-    QObject::connect(ui->ID,SIGNAL(editingFinished()),SLOT(UpdataErrorInfo()));
-    QObject::connect(ui->Age,SIGNAL(editingFinished()),SLOT(UpdataErrorInfo()));
-    QObject::connect(ui->StudyDate,SIGNAL(editingFinished()),SLOT(UpdataErrorInfo()));
-    QObject::connect(ui->ContentDate,SIGNAL(editingFinished()),SLOT(UpdataErrorInfo()));
+    QObject::connect(ui->Name,SIGNAL(editingFinished()),SLOT(UpdateErrorInfo()));
+    QObject::connect(ui->ID,SIGNAL(editingFinished()),SLOT(UpdateErrorInfo()));
+    QObject::connect(ui->Age,SIGNAL(editingFinished()),SLOT(UpdateErrorInfo()));
+    QObject::connect(ui->StudyDate,SIGNAL(editingFinished()),SLOT(UpdateErrorInfo()));
+    QObject::connect(ui->ContentDate,SIGNAL(editingFinished()),SLOT(UpdateErrorInfo()));
     //QMessageBox::about(this,"",QString::number(ReadConfig().size()));
 
 }
@@ -125,7 +125,7 @@ QVector<Elementinfo> MainWindow::ReadConfig(QString configPath)
 QString MainWindow::SelectOpenFile()
 {
         QString OpenFilePath=QFileDialog::getOpenFileName(
-                    NULL,
+                    this,
                     QString::fromStdString("Open File"),
                     QDir::currentPath(),
                     "DCM File(*.dcm)"
@@ -134,6 +134,7 @@ QString MainWindow::SelectOpenFile()
         {
             LoadFile(OpenFilePath);
         }
+
         return OpenFilePath;
 }
 
@@ -166,7 +167,7 @@ void MainWindow::SelectSaveFile()
    if(dcm!=NULL)
    {
      QString spath = QFileDialog::getSaveFileName(
-                 NULL,
+                 this,
                  QString::fromStdString("Save File"),
                  QDir::currentPath(),"Dcm(*.dcm) ;; Xml(*.xml)");
      SaveFile(spath);
@@ -265,7 +266,7 @@ void MainWindow::ResetPatientInfo()
         }
             index++;
     }
-    UpdataErrorInfo();
+    UpdateErrorInfo();
 }
 
 void MainWindow::Paint(QPixmap &dcmPix)
@@ -274,8 +275,10 @@ void MainWindow::Paint(QPixmap &dcmPix)
 
 }
 
-void MainWindow::UpdataErrorInfo()
+void MainWindow::UpdateErrorInfo()
 {
+    if(dcm!=NULL)
+    {
     ui->IDException->setText(
                 (true == dcm->checkEachTag("PatientID",ui->ID->text().toStdString().c_str()))?
                     (clearflag(inputState,PatientID),""):(setflag(inputState,PatientID) ,"Error"));
@@ -295,6 +298,7 @@ void MainWindow::UpdataErrorInfo()
         ui->btn_Save->setEnabled(false);
     else
         ui->btn_Save->setEnabled(true);
+    }
 }
 
 bool MainWindow::CheckDataValid(QString patientInfo, const QString value)
