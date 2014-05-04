@@ -4,8 +4,6 @@ DcmInformation::DcmInformation(QString iPath, QString oPath)
 {
   this->inputFilePath = iPath;
   this->outputFilePath = oPath;
-
-  setAttributes();
 }
 
 
@@ -25,60 +23,40 @@ bool DcmInformation::loadFromDCM()
 }
 
 
-void DcmInformation::setAttributes(Uint16 GroupNum, Uint16 ElementNum)
+QMap <QString, QPair<ushort, ushort> > DcmInformation::getAttributes(const QList<QString> &tagname)
+{
+   QMap <QString, QPair<ushort, ushort> > annotation;
+   DcmElement * dcmElement = NULL;
+   DcmTag dcmtag;
+   int index = 0;
+   int count = 0;
+   do
+   {
+     dcmElement = this->getDataset()->getElement(count++);
+     dcmtag = dcmElement->getTag();
+     if((index = tagname.indexOf(dcmtag.getTagName())) != -1)
+     {
+       QPair<ushort, ushort> tag;
+       tag.first = dcmtag.getGTag();
+       tag.second = dcmtag.getETag();
+       annotation.insert(tagname.at(index),tag);
+     }
+   } while(!(this->endOfDataSet(dcmtag)));
+
+   return annotation;
+}
+
+
+QString DcmInformation::getDcmQStringValue(ushort gtag, ushort etag)
 {
    DcmElement * element = NULL;
-   this->getDataset()->findAndGetElement(DcmTagKey(GroupNum, ElementNum), element);
+   OFString ofstr = "";
+   this->getDataset()->findAndGetElement(DcmTagKey(gtag, etag), element);
+   if(element == NULL)
+     return "";
 
-   info.append(element);
-}
-
-
-void DcmInformation::setAttributes()
-{
-   Elementinfo annotation[5];
-   fromCfgTag.clear();
-   annotation[0].GTag = 0x0010; annotation[0].ETag = 0x0020;
-   annotation[0].TagName = "PatientID";
-   annotation[0].EVR = EVR_LO;
-   annotation[1].GTag = 0x0010; annotation[1].ETag = 0x0010;
-   annotation[1].TagName = "PatientName";
-   annotation[1].EVR = EVR_PN;
-   annotation[2].GTag = 0x0010; annotation[2].ETag = 0x1010;
-   annotation[2].TagName = "PatientAge";
-   annotation[2].EVR = EVR_AS;
-   annotation[3].GTag = 0x0008; annotation[3].ETag = 0x0020;
-   annotation[3].TagName = "StudyDate";
-   annotation[3].EVR = EVR_DA;
-   annotation[4].GTag = 0x0008; annotation[4].ETag = 0x0023;
-   annotation[4].TagName = "ContentDate";
-   annotation[4].EVR = EVR_DA;
-   for(int i=0;i<5;++i)
-    fromCfgTag.push_back(annotation[i]);
-}
-
-
-QVector <DcmElement*> DcmInformation::getAttributes()
-{
-   info.clear();
-   //clear the buffer
-   setAttributes(0x0010,0x0020);
-   setAttributes(0x0010,0x0010);
-   setAttributes(0x0010,0x1010);
-   setAttributes(0x0008,0x0020);
-   setAttributes(0x0008,0x0023);
-
-   return info;
-}
-
-
-Elementinfo DcmInformation::findTagFromTagName(const QString tagname)
-{
-   foreach(Elementinfo ele,fromCfgTag)
-   {
-     if(tagname == ele.TagName)
-       return ele;
-   }
+   element->getOFString(ofstr,0);
+   return ofstr.c_str();
 }
 
 
@@ -96,12 +74,34 @@ bool DcmInformation::endOfDataSet(const DcmTag& dcmtag)
 
 bool DcmInformation::checkEachTag(const QString tagname, const char *value)
 {
-   Elementinfo eletag = findTagFromTagName(tagname);
-   return checkEachTag(eletag.EVR, value);
+   QList<QString> tagnamelist;
+   tagnamelist.append(tagname);
+   QMap <QString, QPair<ushort, ushort> > attr = this->getAttributes(tagnamelist);
+   if(!attr.isEmpty())
+   {
+     QPair<ushort, ushort> tag = attr.value(tagname);
+     return checkEachTag(tag.first, tag.second, value);
+   }
+
+   //return false;
+   //May produce an error when the searched dcmtagkey isn't in dataset
+   return true;
+
 }
 
 
-bool DcmInformation::checkEachTag(const int &dcmevr, const char *value)
+bool DcmInformation::checkEachTag(ushort gtag, ushort etag, const char * value)
+{
+   DcmElement * element = NULL;
+   this->getDataset()->findAndGetElement(DcmTagKey(gtag, etag), element);
+   if(element != NULL)
+     return checkEachTag(element->getVR(), value);
+   else
+     return false;
+}
+
+
+bool DcmInformation::checkEachTag(const DcmEVR &dcmevr, const char *value)
 {
    bool flag = true;
    switch(dcmevr)
@@ -209,11 +209,25 @@ QPixmap DcmInformation::drawDcmImage(int width, int height)
 }
 
 
-void DcmInformation::putAndInsertString(const QString tagname, const QString& value)
+bool DcmInformation::putAndInsertString(const QString tagname, const QString& value)
 {
-   Elementinfo eletag = findTagFromTagName(tagname);
-   this->getDataset()->putAndInsertString(DcmTagKey(eletag.GTag,eletag.ETag),
-                                      value.toStdString().c_str());
+   QList<QString> tagnamelist;
+   tagnamelist.append(tagname);
+   QMap <QString, QPair<ushort, ushort> > attr = this->getAttributes(tagnamelist);
+   if(!attr.isEmpty())
+   {
+     QPair<ushort, ushort> tag = this->getAttributes(tagnamelist).value(tagname);
+     return putAndInsertString(tag.first, tag.second, value);
+   }
+
+   return false;
+}
+
+
+bool DcmInformation::putAndInsertString(ushort gtag, ushort etag, const QString& value)
+{
+   return this->getDataset()->putAndInsertString(DcmTagKey(gtag,etag),
+                                  value.toStdString().c_str()).good();
 }
 
 
@@ -264,17 +278,18 @@ FileFliter DcmInformation::getSavedFileType()
 }
 
 
-void DcmInformation::saveDcmFile()
+bool DcmInformation::saveDcmFile()
 {
-   this->saveFile(outputFilePath.toStdString().c_str());
+   return this->saveFile(outputFilePath.toStdString().c_str()).good();
 }
 
 
-void DcmInformation::saveXmlFile()
+bool DcmInformation::saveXmlFile()
 {
    std::ofstream myfile(outputFilePath.toStdString().c_str());
    myfile<<"<?xml version=\"1.0\" ?>\n";
    //wirte Metainformation of xml
-   this->writeXML(myfile);
+   OFCondition oc = this->writeXML(myfile);
    myfile.close();
+   return oc.good();
 }

@@ -3,7 +3,8 @@
 
 #include <dcmtk/config/osconfig.h>
 #include <dcmtk/dcmdata/dctk.h>
-#include <QVector>
+#include <QMap>
+#include <QList>
 #include <QMessageBox>
 #include "imageview.h"
 
@@ -15,15 +16,6 @@
 //#define PatientImageDate (0x0008,0x0023)
 //#define PatientImageTime (0x0008,0x0033)
 
-typedef struct Elementinfo
-{
-    unsigned short GTag;
-    unsigned short ETag;
-    QString TagName;
-    QString VRDescription;
-    int     EVR;
-}Elementinfo;
-
 enum FileFliter{
     Type_XML,   //xml
     Type_DCM,   //dcm
@@ -34,10 +26,6 @@ class DcmInformation
    : public DcmFileFormat
 {
   private:
-     QVector <DcmElement*> info;  //save the DcmElement element
-     QVector <Elementinfo> fromCfgTag;//save information from config file
-     void setAttributes(Uint16, Uint16); //set the DcmElement element to QVector<DcmElement*>
-     void setAttributes(); //set information to QVector <Elementinfo>
      QString inputFilePath; // Loading file path
      QString outputFilePath; // saving file path
 
@@ -51,20 +39,24 @@ class DcmInformation
      bool isValid(); // check file format
      void customSaveFile(); //save *.dcm or *.xml file
      FileFliter getSavedFileType(); //get save file type (dcm or xml)
-     void saveDcmFile();  //save file as dcm
-     void saveXmlFile();  //save file as xml
-     QVector <DcmElement*> getAttributes(); // return selected elements (DcmElement)
+     bool saveDcmFile();  //save file as dcm
+     bool saveXmlFile();  //save file as xml
+     QMap <QString, QPair<ushort, ushort> > getAttributes(const QList<QString> &tagname);
+     QString getDcmQStringValue(ushort gtag, ushort etag);
      void setOutputFile(const QString &oPath); //set Output File path (OutputFilePath)
      QString getInputFile(); // get Input File path (inputFilePath)
      QString getOutputFile();// get Output File path (OutputFilePath)
      QPixmap drawDcmImage(int width,int height); //draw image return QPixmap
-     void putAndInsertString(const QString tagname, const QString& value);
+     bool putAndInsertString(const QString tagname, const QString& value);
+     bool putAndInsertString(ushort gtag, ushort etag, const QString& value);
      //Change the value replaced the original value of tag
-     bool checkEachTag(const int & dcmevr,const char * value);
+     bool checkEachTag(ushort gtag, ushort etag, const char * value);
+     //Check the validity of each tag (input tag)
+     bool checkEachTag(const DcmEVR &dcmevr, const char * value);
      //Check the validity of each tag (input DcmEVR)
      bool checkEachTag(const QString tagname, const char *value);
      //Check the validity of each tag (input TagName)
-     Elementinfo findTagFromTagName(const QString tagname);
+//     Elementinfo findTagFromTagName(const QString tagname);
      //give tagname to find tag return Elementinfo
 };
 
