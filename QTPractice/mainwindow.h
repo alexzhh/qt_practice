@@ -19,14 +19,35 @@ class MainWindow;
 #define clearflag(data,pos) (data=(data & ~(1<<pos)))
 
 //A struct Save single Config information
-//typedef struct Elementinfo
-//{
-//    unsigned short GTag;
-//    unsigned short ETag;
-//    QString TagName;
-//    QString VRDescription;
-//    int     EVR;
-//}Elementinfo;
+typedef struct ElementInfo
+{
+    ushort GTag;
+    ushort ETag;
+    QString TagName;
+    QString TagValue;
+    ElementInfo(){}
+    ElementInfo(ushort gtag,ushort etag,QString tagname,QString tagvalue)
+    {
+      GTag = gtag;
+      ETag = etag;
+      TagName = tagname;
+      TagValue = tagvalue;
+    }
+    void operator =(ElementInfo value)
+    {
+      this->ETag = value.ETag;
+      this->GTag = value.GTag;
+      this->TagName = value.TagName;
+      this->TagValue = value.TagValue;
+    }
+    bool operator ==(ElementInfo &value)
+    {
+      return (this->ETag==value.ETag &&
+              this->GTag==value.GTag &&
+              this->TagName==value.TagName &&
+              this->TagValue==value.TagValue);
+    }
+}ElementInfo;
 
 
 
@@ -50,10 +71,10 @@ private:
     Ui::MainWindow *ui;
     //Save some Patient Information from file
     //patient name,patient age,patient id,study date,content date etc.
-    QVector<DcmElement*> filePatientInfo;
+    QList<ElementInfo> filePatientInfo;
     DcmInformation* dcm;
     //save config information from .xml
-    QVector<Elementinfo> config;
+    //QVector<Elementinfo> config;
     //all user input flag,0 if ok,nonzero otherwise
     unsigned long inputState;
 public:
@@ -68,7 +89,7 @@ public:
     //Paint DCM image
     void Paint(QPixmap &dcmPix);
     //read config from .xml file
-    QVector<Elementinfo> ReadConfig(QString ConfigPath);
+    QList<ElementInfo> ReadConfig(QString ConfigPath);
     //init dcmobject(free space)
     void InitDCMObject(DcmInformation* dcmObject);
     //pop up  message
@@ -95,7 +116,5 @@ public slots:
     void ResetPatientInfo();
     //Alert while error input
     void UpdateErrorInfo();
-    //validate user input,true if ok, false otherwise
-    bool CheckDataValid(QString patientInfo, const QString value);
 };
 #endif // MAINWINDOW_H

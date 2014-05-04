@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->StudyDate,SIGNAL(editingFinished()),SLOT(UpdateErrorInfo()));
     QObject::connect(ui->ContentDate,SIGNAL(editingFinished()),SLOT(UpdateErrorInfo()));
     //QMessageBox::about(this,"",QString::number(ReadConfig().size()));
+    ReadConfig("");
 
 }
 
@@ -59,9 +60,15 @@ DcmInformation* MainWindow::GetDCMObject()
     return this->dcm;
 }
 
-QVector<Elementinfo> MainWindow::ReadConfig(QString configPath)
+QList<ElementInfo> MainWindow::ReadConfig(QString configPath)
 {
-    QFile xmlfile;
+  filePatientInfo.push_back(ElementInfo(0x0010,0x0020,"PatientID",""));
+  filePatientInfo.push_back(ElementInfo(0x0010,0x0010,"PatientName",""));
+  filePatientInfo.push_back(ElementInfo(0x0010,0x1010,"PatientAge",""));
+  filePatientInfo.push_back(ElementInfo(0x0008,0x0020,"StudyDate",""));
+  filePatientInfo.push_back(ElementInfo(0x0008,0x0023,"ContentDate",""));
+  return filePatientInfo;
+    /*QFile xmlfile;
     QDomDocument doc;
     QString errmsg="";
     xmlfile.setFileName(configPath);
@@ -78,7 +85,7 @@ QVector<Elementinfo> MainWindow::ReadConfig(QString configPath)
         QDomNodeList nodelist=doc.elementsByTagName("Element");
         for(int i=0;i<nodelist.size();i++)
         {
-            Elementinfo ele;
+            ElementInfo ele;
             ele.EVR = nodelist.at(i).toElement().text().toInt();
             QDomNamedNodeMap attrib=nodelist.at(i).attributes();
             bool ValidConfigItem=true;
@@ -119,7 +126,7 @@ QVector<Elementinfo> MainWindow::ReadConfig(QString configPath)
         }
     }
     xmlfile.close();
-    return config;
+    return config;*/
 }
 
 QString MainWindow::SelectOpenFile()
@@ -148,7 +155,14 @@ bool MainWindow::LoadFile(QString openFilePath)
         InitDCMObject(tmp);
         QPixmap qmap = dcm->drawDcmImage(ui->DCMPaint->width(),ui->DCMPaint->height());
         Paint(qmap);
-        filePatientInfo = dcm->getAttributes();
+        QList<ElementInfo> tmplist;
+        foreach(ElementInfo ele,filePatientInfo)
+        {
+            ele.TagValue = dcm->getDcmQStringValue(ele.GTag,ele.ETag);
+            tmplist.push_back(ele);
+        }
+        filePatientInfo.clear();
+        filePatientInfo = tmplist;
         ResetPatientInfo();
     }
     else
@@ -233,7 +247,7 @@ void MainWindow::FillPatientInfo(PatientInfo type, QString valueFiled)
     case PatientID:  ui->ID->setText(valueFiled);break;
     case PatientName:ui->Name->setText(valueFiled);break;
     case PatientAge: ui->Age->setText(valueFiled);break;
-    case StudyDate:ui->StudyDate->setText(valueFiled);break;
+    case StudyDate:  ui->StudyDate->setText(valueFiled);break;
     case ContentDate:ui->ContentDate->setText(valueFiled);break;
     }
 }
@@ -251,20 +265,18 @@ void MainWindow::SavePatientInfo2File()
 
 void MainWindow::ResetPatientInfo()
 {
-    int index=0;
-    foreach(DcmElement* dc,filePatientInfo)
+  foreach(ElementInfo ele,filePatientInfo)
     {
-        if(dc!=NULL)
-        {
-            OFString ValueFiled="";
-            dc->getOFString(ValueFiled,0);
-            FillPatientInfo(PatientInfo(index),ValueFiled.c_str());
-        }
-        else
-        {
-            FillPatientInfo(PatientInfo(index),"");
-        }
-            index++;
+      if(ele.TagName=="PatientName")
+        ui->Name->setText(ele.TagValue);
+      else if(ele.TagName=="PatientAge")
+        ui->Age->setText(ele.TagValue);
+      else if(ele.TagName=="PatientID")
+        ui->ID->setText(ele.TagValue);
+      else if(ele.TagName=="StudyDate")
+        ui->StudyDate->setText(ele.TagValue);
+      else if(ele.TagName=="ContentDate")
+        ui->ContentDate->setText(ele.TagValue);
     }
     UpdateErrorInfo();
 }
@@ -272,7 +284,6 @@ void MainWindow::ResetPatientInfo()
 void MainWindow::Paint(QPixmap &dcmPix)
 {
     ui->DCMPaint->setPixmap(dcmPix);
-
 }
 
 void MainWindow::UpdateErrorInfo()
@@ -299,45 +310,6 @@ void MainWindow::UpdateErrorInfo()
     else
         ui->btn_Save->setEnabled(true);
     }
-}
-
-bool MainWindow::CheckDataValid(QString patientInfo, const QString value)
-{
-    bool result = true;
-    /*switch(VRType)
-    {
-    case PatientID:
-        result = dcm->checkEachTag("PatientID",Value.toStdString().c_str());
-        (result == true)?
-                    (clearflag(InputState,PatientID)):
-                    (setflag(InputState,PatientID));
-        break;
-    case PatientName:
-        result = dcm->checkEachTag("PatientName",Value.toStdString().c_str());
-        (result == true)?
-                    (clearflag(InputState,PatientName)):
-                    (setflag(InputState,PatientName));
-        break;
-    case PatientAge:
-        result = dcm->checkEachTag("PatientAge",Value.toStdString().c_str());
-        (result == true)?
-                    (clearflag(InputState,PatientAge)):
-                    (setflag(InputState,PatientAge));
-        break;
-    case StudyDate:
-        result = dcm->checkEachTag("StudyDate",Value.toStdString().c_str());
-        (result == true)?
-                    (clearflag(InputState,StudyDate)):
-                    (setflag(InputState,StudyDate));
-        break;
-    case ContentDate:
-        result = dcm->checkEachTag("ContentDate",Value.toStdString().c_str());
-        (result == true)?
-                    (clearflag(InputState,ContentDate)):
-                    (setflag(InputState,ContentDate));
-        break;
-    }*/
-    return result;
 }
 
 MainWindow::~MainWindow()
